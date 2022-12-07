@@ -33,8 +33,6 @@ io.on('connection', socket => {
         socket.emit('validated', 1);
 
     */
-
-
   });
 
   socket.on('disconnect', () => {
