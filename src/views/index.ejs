@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chess</title>
-    <style>
-        body {
-            margin: 0;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chess</title>
+
+  <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
-    <canvas id="cnv"  width="450" height = "450"></canvas>
+    <canvas id="cnv" width="450" height="450"></canvas>
+    <button onclick="move()">Move</button>
+
     <script src="js/index.js"></script>
+    <script src="js/socket.js"></script>
 </body>
 </html>

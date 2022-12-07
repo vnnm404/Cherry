@@ -17,9 +17,31 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', socket => {
-  console.log(`User[${socket.id}]: connected`);
+  // console.log(`User[${socket.id}]: connected`);
+
+  socket.on('move', moveStr => {
+    // console.log(`User[${socket.id}]: sent: ${moveStr}`);
+
+    /*
+      valid move = validateMove(moveStr);
+
+      if valid move:
+        // success
+        socket.emit('validated', 0);
+      else:
+        // failure
+        socket.emit('validated', 1);
+
+    */
+
+
+  });
+
+  socket.on('disconnect', () => {
+    // console.log(`User[${socket.id}]: disconnected`);
+  });
 });
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Live on ${PORT}`);
 });
