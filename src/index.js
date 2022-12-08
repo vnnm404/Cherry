@@ -47,9 +47,10 @@ io.on('connection', socket => {
 
     */
 
+    // console.log('turn ::: ' + turnState);
     let valid = chessMoveValidate(boardState, fromCoords, toCoords, turnState);
     console.log('Move validated to be:: ' + valid);
-    turnState = !turnState;
+    turnState = 1 - turnState;
 
     if (valid) {
       socket.emit('validated', 1);
