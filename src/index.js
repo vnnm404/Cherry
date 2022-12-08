@@ -2,6 +2,8 @@ import express from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
 
+import { chessMoveValidate } from './helpers/validator.js';
+
 const PORT = 5500;
 const app = express();
 const server = http.createServer(app);
@@ -12,6 +14,17 @@ app.set('view engine', 'ejs');
 app.set('views', './src/views');
 
 
+let boardState = [[12, 14, 13, 11, 10, 13, 14, 12],
+                    [9, 9, 9, 9, 9, 9, 9, 9],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [1, 1, 1, 1, 1, 1, 1, 1],
+                    [4, 6, 5, 3, 2, 5, 6, 4]];
+let turnState = 0;
+
+
 app.get('/', (req, res) => {
   res.render('index');
 });
@@ -19,7 +32,7 @@ app.get('/', (req, res) => {
 io.on('connection', socket => {
   console.log(`User[${socket.id}]: connected`);
 
-  socket.on('move', moveStr => {
+  socket.on('move', (fromCoords, toCoords) => {
     // console.log(`User[${socket.id}]: sent: ${moveStr}`);
 
     /*
@@ -33,6 +46,8 @@ io.on('connection', socket => {
         socket.emit('validated', 0);
 
     */
+
+    
   });
 
   socket.on('auth', ({ username, password }) => {

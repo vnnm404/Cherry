@@ -46,7 +46,7 @@ function colorToTurn(color){
         return blackTurn;
 }
 
-function chessMoveValidate(board, moveFromCoord, moveToCoord, turn){
+export function chessMoveValidate(board, moveFromCoord, moveToCoord, turn){
     // check if the board is of right size,
     // this shouldn't be wrong as it is not user controlled
     assert(board.length() == noOfSquares);

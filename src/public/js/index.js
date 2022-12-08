@@ -200,6 +200,8 @@ function handle_drag() {
     }
 }
 
+// socket.emit('move', fromCoords, toCoords);
+
 window.onload = () => {
     draw();
     init_board();
