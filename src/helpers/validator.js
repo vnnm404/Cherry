@@ -3,7 +3,6 @@ const noOfSquares = 8;
 const whiteTurn = 0;
 const blackTurn = 1;
 
-
 const blank = 0b0000;
 const white = 0b0000;
 const black = 0b1000;
@@ -96,6 +95,7 @@ export function chessMoveValidate(board, moveFromCoord, moveToCoord, turn){
             break;
     }
 
+    // 
 }
 
 function coordValidate(coord){
