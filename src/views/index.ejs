@@ -6,10 +6,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Chess</title>
 
+  <link rel="stylesheet" href="styles/index.css">
   <script src="/socket.io/socket.io.js"></script>
+  <script src="js/events.js"></script>
 </head>
 <body>
     <canvas id="cnv" width="450" height="450"></canvas>
+
+    <div id="form" class="">
+      <div>
+        <label for="username">Username</label>
+        <input type="text" name="username" id="username">
+      </div>
+      <div>
+        <label for="password">Password</label>
+        <input type="text" name="password" id="password">
+      </div>
+      <button onclick="submitLoginDetails()">Submit</button>
+    </div>
+    <div id="auth-success" class="hide">
+      <h3>Successfully logged in!</h3>
+    </div>
+    <div id="auth-fail" class="hide">
+      <h3>Invalid credentials.</h3>
+    </div>
 
     <script src="js/index.js"></script>
     <script src="js/socket.js"></script>

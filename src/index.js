@@ -17,7 +17,7 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', socket => {
-  // console.log(`User[${socket.id}]: connected`);
+  console.log(`User[${socket.id}]: connected`);
 
   socket.on('move', moveStr => {
     // console.log(`User[${socket.id}]: sent: ${moveStr}`);
@@ -27,16 +27,28 @@ io.on('connection', socket => {
 
       if valid move:
         // success
-        socket.emit('validated', 0);
+        socket.emit('validated', 1);
       else:
         // failure
-        socket.emit('validated', 1);
+        socket.emit('validated', 0);
 
     */
   });
 
+  socket.on('auth', ({ username, password }) => {
+    console.log(`User[${socket.id}]: auth with [${username}, ${password}]`);
+
+    /*
+      if (authenticateUser(username, password)) {
+        socket.emit('auth', 1);
+      } else {
+        socket.emit('auth', 0);
+      }
+    */
+  });
+
   socket.on('disconnect', () => {
-    // console.log(`User[${socket.id}]: disconnected`);
+    console.log(`User[${socket.id}]: disconnected`);
   });
 });
 
