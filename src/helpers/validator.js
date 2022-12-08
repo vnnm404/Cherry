@@ -74,6 +74,11 @@ export function chessMoveValidate(board, moveFromCoord, moveToCoord, turn){
         return false;
     }
 
+    if (turn == 0 && getColor(board[moveFromCoord.y][moveFromCoord.x]) != white)
+        return false;
+    if (turn == 1 && getColor(board[moveFromCoord.y][moveFromCoord.x]) != black)
+        return false;
+
     // check if the piece can even move it to that spot
     // in a non-blocking board
     switch(piece){

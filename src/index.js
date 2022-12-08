@@ -54,6 +54,8 @@ io.on('connection', socket => {
 
     if (valid) {
       socket.emit('validated', 1);
+      boardState[toCoords.y][toCoords.x] = boardState[fromCoords.y][fromCoords.x];
+      boardState[fromCoords.y][fromCoords.x] = 0;
     } else {
       socket.emit('validated', 0);
     }
