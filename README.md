@@ -9,8 +9,8 @@ An online multiplayer (2-player) chess game.
 ### board
 
 ```
-      0   1   2   3   4   5   6   7
-    +---+---+---+---+---+---+---+---+
+ x/j  0   1   2   3   4   5   6   7
+ y/i+---+---+---+---+---+---+---+---+
   0 |   |   |   |   |   |   |   |   |   BLACK SIDE
     +---+---+---+---+---+---+---+---+
   1 |   |   |   |   |   |   |   |   |
@@ -38,3 +38,12 @@ An online multiplayer (2-player) chess game.
 - [ ] matchmaking
 - [ ] generating links for matches
 - [ ] Make it pretty
+
+#### Chess related
+- [X] valid moves in free board
+- [ ] ignoring check
+- [ ] king safety (movement of pinned pieces)
+- [ ] pawn promotion
+- [ ] 50 move draw
+- [ ] castling
+- [ ] enpassentwdfssf

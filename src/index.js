@@ -23,7 +23,7 @@ io.on('connection', socket => {
     // console.log(`User[${socket.id}]: sent: ${moveStr}`);
 
     /*
-      valid move = validateMove(moveStr);
+      valid move = validateMove(board, move_from, move_to, turn (black or white));
 
       if valid move:
         // success
