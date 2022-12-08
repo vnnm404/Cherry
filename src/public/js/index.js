@@ -30,6 +30,7 @@ let is_holding_piece = false;
 let holding_piece = 0;
 let mouse_x, mouse_y;
 let curr_position, from_position;
+let old_piece;
 
 let sprites = []
 sprites[blank] = ' ';
@@ -206,6 +207,7 @@ function handle_drag() {
                 move_sound.play();
             else
                 capture_sound.play();
+            old_piece = board[i][j];
             board[i][j] = holding_piece;
             holding_piece = 0;
         }

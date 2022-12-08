@@ -5,6 +5,8 @@ socket.on('validated', valid => {
     // play out move
   } else {
     // indicate to player that he played an invalid move
+    board[from_position.y][from_position.x] = holding_piece;
+    board[curr_position.y][curr_position.x] = old_piece;
   }
 });
 
