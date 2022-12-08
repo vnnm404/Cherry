@@ -258,3 +258,18 @@ function queenMoveValidate(board, moveFromCoord, moveToCoord, turn){
     return bishopMoveValidate(board, moveFromCoord, moveToCoord, turn)
         || rookMoveValidate(board, moveFromCoord, moveToCoord, turn);
 }
+
+function kingMoveValidate(board, moveFromCoord, moveToCoord, turn){
+    let destValue = board[moveToCoord.y][moveToCoord.x];
+    
+    // cannot capture own pieces
+    if(getColor(destValue) == turnToColor(turn))
+        return false;
+    
+    let differenceX = Math.abs(moveToCoord.x - moveFromCoord.x);
+    let differenceY = Math.abs(moveToCoord.y - moveFromCoord.y);
+    
+    if (differenceX <= 1 && differenceY <= 1)
+        return true;
+    return false;
+}
