@@ -29,6 +29,8 @@ function getPiece(value){
 }
 
 function getColor(value){
+    if (value == blank)
+        return -1;
     // the 4th bit denotes color
     return value & (0b1000);
 }
@@ -71,6 +73,11 @@ export function chessMoveValidate(board, moveFromCoord, moveToCoord, turn){
     if (piece == blank){
         return false;
     }
+
+    if (turn == 0 && getColor(board[moveFromCoord.y][moveFromCoord.x]) != white)
+        return false;
+    if (turn == 1 && getColor(board[moveFromCoord.y][moveFromCoord.x]) != black)
+        return false;
 
     // check if the piece can even move it to that spot
     // in a non-blocking board
