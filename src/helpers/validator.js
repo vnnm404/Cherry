@@ -1,3 +1,5 @@
+import assert from 'assert';
+
 const noOfSquares = 8;
 
 const whiteTurn = 0;
@@ -48,8 +50,8 @@ function colorToTurn(color){
 export function chessMoveValidate(board, moveFromCoord, moveToCoord, turn){
     // check if the board is of right size,
     // this shouldn't be wrong as it is not user controlled
-    assert(board.length() == noOfSquares);
-    assert(board[0].length() == noOfSquares);
+    assert.equal(board.length, noOfSquares);
+    assert.equal(board[0].length, noOfSquares);
 
     let valid = true;
 

@@ -1,7 +1,5 @@
 // no en passant, castling, or advance drawing yet
 
-const { Socket } = require("socket.io");
-
 const dark_square_color = '#4f5969';
 const light_square_color = '#c1c8d4';
 const start_fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR';

@@ -33,7 +33,7 @@ io.on('connection', socket => {
   console.log(`User[${socket.id}]: connected`);
 
   socket.on('move', (fromCoords, toCoords) => {
-    // console.log(`User[${socket.id}]: sent: ${moveStr}`);
+    console.log(`User[${socket.id}]: sent: ${fromCoords.x} ${fromCoords.y} || ${toCoords.x} ${toCoords.y}`);
 
     /*
       valid move = validateMove(board, move_from, move_to, turn (black or white));
@@ -47,7 +47,15 @@ io.on('connection', socket => {
 
     */
 
-    
+    let valid = chessMoveValidate(boardState, fromCoords, toCoords, turnState);
+    console.log('Move validated to be:: ' + valid);
+    turnState = !turnState;
+
+    if (valid) {
+      socket.emit('validated', 1);
+    } else {
+      socket.emit('validated', 0);
+    }
   });
 
   socket.on('auth', ({ username, password }) => {
