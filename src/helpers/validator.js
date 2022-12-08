@@ -29,6 +29,8 @@ function getPiece(value){
 }
 
 function getColor(value){
+    if (value == blank)
+        return -1;
     // the 4th bit denotes color
     return value & (0b1000);
 }
@@ -131,8 +133,10 @@ function pawnMoveValidate(board, moveFromCoord, moveToCoord, turn){
 function whitePawnMoveValidate(board, moveFromCoord, moveToCoord){
     
     // only one step ahead at atime and in only one direction
-    if (moveFromCoord.y - 1 != moveToCoord.y)
+    if (moveFromCoord.y - 1 != moveToCoord.y){
+        console.log('Chess Error: Too much ahead')
         return false;
+    }
     
     let differnceX = Math.abs(moveToCoord.x - moveFromCoord.x);
     if (differnceX > 1)
@@ -141,12 +145,16 @@ function whitePawnMoveValidate(board, moveFromCoord, moveToCoord){
     let destValue = board[moveToCoord.y][moveToCoord.x];
 
     // cannot capture own pieces
-    if (getColor(destValue) == white) 
+    if (getColor(destValue) == white){
+        console.log("Chess Error: Capturing your own pieces");
         return false;
+    }
 
     // can move diagonally only during captures
-    if (differnceX == 1 && destValue == blank)
+    if (differnceX == 1 && destValue == blank){
+        console.log('Chess Error: cant move diagonally without enemy');
         return false;
+    }
 
     return true;
 }
@@ -163,8 +171,10 @@ function blackPawnMoveValidate(board, moveFromCoord, moveToCoord){
     let destValue = board[moveToCoord.y][moveToCoord.x];
 
     // cannot capture own pieces
-    if (getColor(destValue) == black) 
+    if (getColor(destValue) == white){
+        console.log("Chess Error: Capturing your own pieces");
         return false;
+    }
 
     // can move diagonally only during captures
     if (differenceX == 1 && destValue == blank)
