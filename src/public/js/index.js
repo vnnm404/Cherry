@@ -29,8 +29,9 @@ let was_mouse_down = false;
 let is_holding_piece = false;
 let holding_piece = 0;
 let mouse_x, mouse_y;
-let curr_position, from_position;
-let old_piece;
+let curr_position, from_position, to_position;
+let old_piece, new_piece;
+let is_being_validated = false;
 
 let sprites = []
 sprites[blank] = ' ';
@@ -173,13 +174,19 @@ function get_box_coords() {
 }
 
 function handle_drag() {
+    if(is_being_validated)
+        return;
     let coords = get_box_coords();
     let i = coords[0], j = coords[1];
     if(was_mouse_down == false && is_mouse_down == true){
         from_position = curr_position;
     }
     if(was_mouse_down == true && is_mouse_down == false && is_holding_piece){
+        old_piece = board[i][j];
+        new_piece = holding_piece;
+        to_position = curr_position;
         socket.emit('move', from_position, curr_position);
+        is_being_validated = true;
     }
     was_mouse_down = is_mouse_down;
     curr_position = {

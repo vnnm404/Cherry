@@ -23,6 +23,10 @@ function Coord(x, y){
 
 }
 
+function coordEqual(a, b){
+    return a.x == b.x && a.y == b.y;
+}
+
 function getPiece(value){
     // the piece information is stored in the first 3 bits
     return value & (0b111);
@@ -57,23 +61,26 @@ export function chessMoveValidate(board, moveFromCoord, moveToCoord, turn){
 
     let valid = true;
 
-    valid &= coordValidate(moveFromCoord);
-    valid &= coordValidate(moveToCoord);
-    valid &= turnValidate(turn);
+    valid &&= coordValidate(moveFromCoord);
+    valid &&= coordValidate(moveToCoord);
+    valid &&= turnValidate(turn);
 
     // move to same position not a move
-    if (moveFromCoord == moveToCoord)
+    if (coordEqual(moveFromCoord, moveToCoord)){
+        console.log("ChessError: move to same position not a move");
         return false;
+    }
 
-    if(valid == false)
+    if(valid == false){
+        console.log("ChessError: Invalid board positions");
         return false;
+    }
     let piece = getPiece(board[moveFromCoord.y][moveFromCoord.x]);
     
     // if player moved a blank square its invalid
     if (piece == blank){
         return false;
     }
-
     if (turn == 0 && getColor(board[moveFromCoord.y][moveFromCoord.x]) != white)
         return false;
     if (turn == 1 && getColor(board[moveFromCoord.y][moveFromCoord.x]) != black)
@@ -101,6 +108,7 @@ export function chessMoveValidate(board, moveFromCoord, moveToCoord, turn){
                         moveFromCoord, moveToCoord, turn);
             break;
         default:    valid = false;
+                    console.log("ChessError: not a piece");
             break;
     }
 
@@ -176,7 +184,7 @@ function blackPawnMoveValidate(board, moveFromCoord, moveToCoord){
     let destValue = board[moveToCoord.y][moveToCoord.x];
 
     // cannot capture own pieces
-    if (getColor(destValue) == white){
+    if (getColor(destValue) == black){
         console.log("Chess Error: Capturing your own pieces");
         return false;
     }
@@ -210,30 +218,37 @@ function bishopMoveValidate(board, moveFromCoord, moveToCoord, turn){
     let destValue = board[moveToCoord.y][moveToCoord.x];
     
     // cannot capture own pieces
-    if(getColor(destValue) == turnToColor(turn))
+    if(getColor(destValue) == turnToColor(turn)){
+        console.log("Chess Error: Capturing own pieces");
         return false;
+    }
 
     let differenceX = Math.abs(moveToCoord.x - moveFromCoord.x);
     let differenceY = Math.abs(moveToCoord.y - moveFromCoord.y);
     let directionX = Math.sign(moveToCoord.x - moveFromCoord.x);
     let directionY = Math.sign(moveToCoord.y - moveFromCoord.y);
-    if (differenceX != differenceY)
+    if (differenceX != differenceY){
+        console.log("ChessError: bishop can only move in diagonal");
         return false;
+    }
     let currCoord = moveFromCoord;
-    
+    console.log(currCoord);
+
     // go in the direction one step
     currCoord.x += 1 * directionX;
     currCoord.y += 1 * directionY;
+    console.log(currCoord);
 
     let valid = false;
     // go in the direction and check if its all clear
-    while(coordValidate(currCoord) && currCoord != moveToCoord){
+    while(coordValidate(currCoord) && !coordEqual(currCoord, moveToCoord)){
         if (board[currCoord.y][currCoord.x] != blank)
             break;
         currCoord.x += 1 * directionX;
         currCoord.y += 1 * directionY;
     }
-    if(currCoord == moveToCoord)
+    console.log(currCoord);
+    if(coordEqual(currCoord, moveToCoord));
         valid = true;
     return valid;
 }
@@ -242,8 +257,10 @@ function rookMoveValidate(board, moveFromCoord, moveToCoord, turn){
     let destValue = board[moveToCoord.y][moveToCoord.x];
     
     // cannot capture own pieces
-    if(getColor(destValue) == turnToColor(turn))
+    if(getColor(destValue) == turnToColor(turn)){
+        console.log("Chess Error: Capturing own pieces");
         return false;
+    }
 
     let differenceX = Math.abs(moveToCoord.x - moveFromCoord.x);
     let differenceY = Math.abs(moveToCoord.y - moveFromCoord.y);
@@ -254,20 +271,24 @@ function rookMoveValidate(board, moveFromCoord, moveToCoord, turn){
         return false;
     
     let currCoord = moveFromCoord;
+    console.log(currCoord);
 
     // go in the direction one step
     currCoord.x += 1 * directionX;
     currCoord.y += 1 * directionY;
+    console.log(currCoord);
 
     let valid = false;
     // go in the direction and check if its all clear
-    while(coordValidate(currCoord) && currCoord != moveToCoord){
+    while(coordValidate(currCoord) && !coordEqual(currCoord, moveToCoord)){
         if (board[currCoord.y][currCoord.x] != blank)
             break;
         currCoord.x += 1 * directionX;
         currCoord.y += 1 * directionY;
     }
-    if(currCoord == moveToCoord)
+    console.log(currCoord);
+
+    if(coordEqual(currCoord, moveToCoord))
         valid = true;
     return valid;
 }

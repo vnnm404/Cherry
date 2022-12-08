@@ -31,6 +31,7 @@ app.get('/', (req, res) => {
 
 io.on('connection', socket => {
   console.log(`User[${socket.id}]: connected`);
+  turnState = 0;
 
   socket.on('move', (fromCoords, toCoords) => {
     console.log(`User[${socket.id}]: sent: ${fromCoords.x} ${fromCoords.y} || ${toCoords.x} ${toCoords.y}`);
@@ -49,13 +50,14 @@ io.on('connection', socket => {
 
     // console.log('turn ::: ' + turnState);
     let valid = chessMoveValidate(boardState, fromCoords, toCoords, turnState);
-    console.log('Move validated to be:: ' + valid);
-    turnState = 1 - turnState;
+    console.log(turnState + ': Move validated to be:: ' + valid);
 
     if (valid) {
       socket.emit('validated', 1);
       boardState[toCoords.y][toCoords.x] = boardState[fromCoords.y][fromCoords.x];
       boardState[fromCoords.y][fromCoords.x] = 0;
+      turnState = 1 - turnState;
+
     } else {
       socket.emit('validated', 0);
     }
