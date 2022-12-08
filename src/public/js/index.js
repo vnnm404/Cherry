@@ -1,5 +1,7 @@
 // no en passant, castling, or advance drawing yet
 
+const { Socket } = require("socket.io");
+
 const dark_square_color = '#4f5969';
 const light_square_color = '#c1c8d4';
 const start_fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR';
@@ -25,9 +27,11 @@ const bishop = 0b0101;
 const knight = 0b0110;
 
 let is_mouse_down = false;
+let was_mouse_down = false;
 let is_holding_piece = false;
 let holding_piece = 0;
 let mouse_x, mouse_y;
+let curr_position, from_position;
 
 let sprites = []
 sprites[blank] = ' ';
@@ -172,8 +176,18 @@ function get_box_coords() {
 function handle_drag() {
     let coords = get_box_coords();
     let i = coords[0], j = coords[1];
+    if(was_mouse_down == false && is_mouse_down == true){
+        from_position = curr_position;
+    }
+    if(was_mouse_down == true && is_mouse_down == false && is_holding_piece){
+        socket.emit('move', from_position, curr_position);
+    }
+    was_mouse_down = is_mouse_down;
+    curr_position = {
+        "x": j,
+        "y": i
+    }
     if (is_mouse_down) {
-
         if (!is_holding_piece) {
             if (board[i][j] == 0)
                 return;
