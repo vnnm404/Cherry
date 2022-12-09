@@ -79,6 +79,7 @@ export function chessMoveValidate(board, moveFromCoord, moveToCoord, turn){
     
     // if player moved a blank square its invalid
     if (piece == blank){
+        console.log("2");
         return false;
     }
     if (turn == 0 && getColor(board[moveFromCoord.y][moveFromCoord.x]) != white)
@@ -112,7 +113,7 @@ export function chessMoveValidate(board, moveFromCoord, moveToCoord, turn){
             break;
     }
 
-    // 
+    console.log('Validator: Reached the end of validator::' + valid);
     return valid;
 }
 
@@ -151,8 +152,8 @@ function whitePawnMoveValidate(board, moveFromCoord, moveToCoord){
         return false;
     }
     
-    let differnceX = Math.abs(moveToCoord.x - moveFromCoord.x);
-    if (differnceX > 1)
+    let differenceX = Math.abs(moveToCoord.x - moveFromCoord.x);
+    if (differenceX > 1)
         return false;
         
     let destValue = board[moveToCoord.y][moveToCoord.x];
@@ -163,8 +164,14 @@ function whitePawnMoveValidate(board, moveFromCoord, moveToCoord){
         return false;
     }
 
+    // cannot capture own pieces
+    if (getColor(destValue) == black && differenceX == 0){
+        console.log("Chess Error: pawns cannot capture pieces infront");
+        return false;
+    }
+
     // can move diagonally only during captures
-    if (differnceX == 1 && destValue == blank){
+    if (differenceX == 1 && destValue == blank){
         console.log('Chess Error: cant move diagonally without enemy');
         return false;
     }
@@ -186,6 +193,12 @@ function blackPawnMoveValidate(board, moveFromCoord, moveToCoord){
     // cannot capture own pieces
     if (getColor(destValue) == black){
         console.log("Chess Error: Capturing your own pieces");
+        return false;
+    }
+
+    // cannot capture own pieces
+    if (getColor(destValue) == white && differenceX == 0){
+        console.log("Chess Error: pawns cannot capture pieces infront");
         return false;
     }
 
@@ -215,6 +228,7 @@ function knightMoveValidate(board, moveFromCoord, moveToCoord, turn){
 }
 
 function bishopMoveValidate(board, moveFromCoord, moveToCoord, turn){    
+    console.log("Validator: Validating Bishop move...");
     let destValue = board[moveToCoord.y][moveToCoord.x];
     
     // cannot capture own pieces
@@ -231,13 +245,13 @@ function bishopMoveValidate(board, moveFromCoord, moveToCoord, turn){
         console.log("ChessError: bishop can only move in diagonal");
         return false;
     }
-    let currCoord = moveFromCoord;
-    console.log(currCoord);
+    let currCoord = Coord(moveFromCoord.x, moveFromCoord.y);
+    // console.log(currCoord);
 
     // go in the direction one step
     currCoord.x += 1 * directionX;
     currCoord.y += 1 * directionY;
-    console.log(currCoord);
+    // console.log(currCoord);
 
     let valid = false;
     // go in the direction and check if its all clear
@@ -247,9 +261,11 @@ function bishopMoveValidate(board, moveFromCoord, moveToCoord, turn){
         currCoord.x += 1 * directionX;
         currCoord.y += 1 * directionY;
     }
-    console.log(currCoord);
-    if(coordEqual(currCoord, moveToCoord));
+    // console.log(currCoord);
+    // console.log(moveToCoord);
+    if(coordEqual(currCoord, moveToCoord))
         valid = true;
+    console.log('Bishop validator::'+valid);
     return valid;
 }
 
@@ -267,10 +283,11 @@ function rookMoveValidate(board, moveFromCoord, moveToCoord, turn){
     let directionX = Math.sign(moveToCoord.x - moveFromCoord.x);
     let directionY = Math.sign(moveToCoord.y - moveFromCoord.y);
 
-    if(differenceY != 0 && differenceX != 0)
+    if(differenceY != 0 && differenceX != 0){
         return false;
+    }
     
-    let currCoord = moveFromCoord;
+    let currCoord = Coord(moveFromCoord.x, moveFromCoord.y);
     console.log(currCoord);
 
     // go in the direction one step
@@ -288,8 +305,10 @@ function rookMoveValidate(board, moveFromCoord, moveToCoord, turn){
     }
     console.log(currCoord);
 
-    if(coordEqual(currCoord, moveToCoord))
+    if(coordEqual(currCoord, moveToCoord)){
+        console.log('Can reach this square');
         valid = true;
+    }
     return valid;
 }
 

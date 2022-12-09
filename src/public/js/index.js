@@ -29,7 +29,7 @@ let was_mouse_down = false;
 let is_holding_piece = false;
 let holding_piece = 0;
 let mouse_x, mouse_y;
-let curr_position, from_position, to_position;
+let curr_position, from_position = {'x' : 0, 'y' : 0}, to_position= {'x' : 0, 'y' : 0};
 let old_piece, new_piece;
 let is_being_validated = false;
 
@@ -179,13 +179,15 @@ function handle_drag() {
     let coords = get_box_coords();
     let i = coords[0], j = coords[1];
     if(was_mouse_down == false && is_mouse_down == true){
-        from_position = curr_position;
+        from_position.x = curr_position.x;
+        from_position.y = curr_position.y;
     }
     if(was_mouse_down == true && is_mouse_down == false && is_holding_piece){
         old_piece = board[i][j];
         new_piece = holding_piece;
-        to_position = curr_position;
-        socket.emit('move', from_position, curr_position);
+        to_position.x = curr_position.x;
+        to_position.y = curr_position.y;
+        socket.emit('move', from_position, to_position);
         is_being_validated = true;
     }
     was_mouse_down = is_mouse_down;
