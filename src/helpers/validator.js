@@ -89,22 +89,22 @@ export function chessMoveValidate(board, moveFromCoord, moveToCoord, turn){
     // check if the piece can even move it to that spot
     // in a non-blocking board
     switch(piece){
-        case pawn:  valid &&= pawnMoveValidate(board, 
+        case pawn:  valid = valid && pawnMoveValidate(board, 
                         moveFromCoord, moveToCoord, turn);
             break;
-        case knight:valid &&= knightMoveValidate(board, 
+        case knight:valid = valid && knightMoveValidate(board, 
                         moveFromCoord, moveToCoord, turn);
             break;
-        case bishop:valid &&= bishopMoveValidate(board, 
+        case bishop:valid = valid && bishopMoveValidate(board, 
                         moveFromCoord, moveToCoord, turn);
             break;
-        case rook:  valid &&= rookMoveValidate(board, 
+        case rook:  valid = valid && rookMoveValidate(board, 
                         moveFromCoord, moveToCoord, turn);
             break;
-        case queen: valid &&= queenMoveValidate(board, 
+        case queen: valid = valid && queenMoveValidate(board, 
                         moveFromCoord, moveToCoord, turn);
             break;
-        case king:  valid &&= kingMoveValidate(board, 
+        case king:  valid = valid && kingMoveValidate(board, 
                         moveFromCoord, moveToCoord, turn);
             break;
         default:    valid = false;
