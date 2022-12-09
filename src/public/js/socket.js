@@ -1,4 +1,4 @@
-var socket = io('localhost:5500');
+var socket = io();
 
 socket.on('validated', valid => {
   if (valid) {
