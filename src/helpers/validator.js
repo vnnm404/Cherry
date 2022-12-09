@@ -61,9 +61,9 @@ export function chessMoveValidate(board, moveFromCoord, moveToCoord, turn){
 
     let valid = true;
 
-    valid = valide && coordValidate(moveFromCoord);
-    valid = valide && coordValidate(moveToCoord);
-    valid = valide && turnValidate(turn);
+    valid = valid && coordValidate(moveFromCoord);
+    valid = valid && coordValidate(moveToCoord);
+    valid = valid && turnValidate(turn);
 
     // move to same position not a move
     if (coordEqual(moveFromCoord, moveToCoord)){
