@@ -4,7 +4,7 @@ import { Server } from 'socket.io';
 
 import { chessMoveValidate } from './helpers/validator.js';
 
-const PORT = 5500;
+const PORT = 80;
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
