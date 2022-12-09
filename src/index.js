@@ -1,6 +1,11 @@
+import { fileURLToPath } from 'url';
 import express from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
+import path from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 import { chessMoveValidate } from './helpers/validator.js';
 
@@ -9,9 +14,11 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-app.use(express.static('./src/public'));
+
+
+app.use(express.static(path.dirname(__filename) + '/public'));
 app.set('view engine', 'ejs');
-app.set('views', './src/views');
+app.set('views', path.dirname(__filename) + '/views');
 
 
 let boardState = [[12, 14, 13, 11, 10, 13, 14, 12],
