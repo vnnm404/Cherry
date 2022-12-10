@@ -1,16 +1,22 @@
 var socket = io();
 
-socket.on('validated', valid => {
-  if (valid) {
-    // play out move
-  } else {
-    // indicate to player that he played an invalid move
-    board[to_position.y][to_position.x] = old_piece;
-    board[from_position.y][from_position.x] = new_piece;
-
-  }
+socket.on('validated', (boardState, turnState) => {
+  board = boardState;
   is_being_validated = false;
+  if (turnState == my_color)
+    can_move = true;
+  else
+    can_move = false;
+});
 
+socket.on('startGame', resp =>{
+  my_color = resp;
+  if(resp == 0){
+    console.log('I am white');
+    can_move = true;
+  }
+  else
+    console.log('I am black');
 });
 
 socket.on('auth', resp => {

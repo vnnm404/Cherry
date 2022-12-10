@@ -32,6 +32,8 @@ let mouse_x, mouse_y;
 let curr_position, from_position = {'x' : 0, 'y' : 0}, to_position= {'x' : 0, 'y' : 0};
 let old_piece, new_piece;
 let is_being_validated = false;
+let can_move = false;
+let my_color = null;
 
 let sprites = []
 sprites[blank] = ' ';
@@ -251,6 +253,7 @@ canvas.onmousemove = (event) => {
 setInterval(() => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     draw();
-    handle_drag();
+    if(can_move)
+        handle_drag();
     render_board();
 }, delta_time);
