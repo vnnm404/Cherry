@@ -1,18 +1,19 @@
 // no en passant, castling, or advance drawing yet
+const move_sound = new Audio('/audio/move-self.mp3');
+const capture_sound = new Audio('/audio/capture.mp3');
+
+const canvas = document.getElementById("cnv");
+const ctx = canvas.getContext('2d');
 
 const dark_square_color = '#4f5969';
 const light_square_color = '#c1c8d4';
 const move_square_color = '#7af4ae';
 const start_fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR';
 const no_of_squares = 8;
-const canvas = document.getElementById("cnv");
-const ctx = canvas.getContext('2d');
 const side_len = 400;
 const offset_x = 25;
 const offset_y = 25;
 const delta_time = 10;
-const move_sound = new Audio('/audio/move-self.mp3');
-const capture_sound = new Audio('/audio/capture.mp3');
 
 const blank = 0b0000;
 const white = 0b0000;
@@ -37,21 +38,21 @@ let can_move = false;
 let my_color = null;
 let match_id = null;
 
-let sprites = []
+let sprites = [];
 sprites[blank] = ' ';
-sprites[white | pawn] = '♙'
-sprites[white | king] = '♔'
-sprites[white | queen] = '♕'
-sprites[white | rook] = '♖'
-sprites[white | bishop] = '♗'
-sprites[white | knight] = '♘'
+sprites[white | pawn] = '♙';
+sprites[white | king] = '♔';
+sprites[white | queen] = '♕';
+sprites[white | rook] = '♖';
+sprites[white | bishop] = '♗';
+sprites[white | knight] = '♘';
 
-sprites[black | pawn] = '♟︎'
-sprites[black | king] = '♚'
-sprites[black | queen] = '♛'
-sprites[black | rook] = '♜'
-sprites[black | bishop] = '♝'
-sprites[black | knight] = '♞'
+sprites[black | pawn] = '♟︎';
+sprites[black | king] = '♚';
+sprites[black | queen] = '♛';
+sprites[black | rook] = '♜';
+sprites[black | bishop] = '♝';
+sprites[black | knight] = '♞';
 
 let board = [];
 
@@ -110,15 +111,7 @@ function fen_to_board(fen) {
         file++;
     }
 
-    // console.log(new_board);
-    // let board_with_pieces = board;
-    // for(let i = 0; i < no_of_squares; i++){
-    //     for(let j = 0; j < no_of_squares; j++){
-    //         board_with_pieces[i][j] = sprites[new_board[i][j]];
-    //     }
-    // }
-    // console.log(board_with_pieces);
-    board = new_board
+    board = new_board;
 }
 
 function render_board() {
@@ -128,18 +121,6 @@ function render_board() {
     let off_y = offset_y * 2 + (side_len_square) / 5;
     for (let i = 0; i < no_of_squares; i++) {
         for (let j = 0; j < no_of_squares; j++) {
-            // if(my_color == 1)
-            //     ctx.fillText(sprites[board[no_of_squares - i - 1][no_of_squares - j - 1]],
-            //         off_x + j * side_len_square,
-            //         off_y + i * side_len_square);
-            // else
-            // if( board[i][j] & 0b10000 != 0){
-            //     console.log(i, j);  
-            //     ctx.fillStyle = move_square_color;
-            //     ctx.fillRect(offset_x + i * side_len_square,
-            //         offset_y + j * side_len_square,
-            //         side_len_square, side_len_square);
-            // }
             ctx.fillStyle = 'black';
             ctx.fillText(sprites[board[i][j] & (0b1111)],
                 off_x + j * side_len_square,
@@ -160,7 +141,7 @@ function draw() {
             else
                 ctx.fillStyle = dark_square_color;
             if(board.length != 0  && (board[j][i] & 0b10000) > 0){
-                console.log(i, j)
+                // console.log(i, j)
                 ctx.fillStyle = move_square_color;
             }
 
@@ -255,8 +236,6 @@ function handle_drag() {
     }
 }
 
-// socket.emit('move', fromCoords, toCoords);
-
 window.onload = () => {
     draw();
     init_board();
@@ -295,10 +274,9 @@ canvas.ontouchmove = (e) => {
     e.preventDefault();
     mouse_x = e.touches[0].clientX;
     mouse_y = e.touches[0].clientY;
-    // console.log(mouse_x, mouse_y);
-
 }
 
+// main draw loop
 setInterval(() => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     draw();

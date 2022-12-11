@@ -1,47 +1,47 @@
 var socket = io();
 
 socket.on('validated', (boardState, turnState) => {
-  if(my_color == 0)
+  if (my_color == 0)
     board = boardState;
-  else{
-    for(let i = 0; i < no_of_squares; i++){
-      for(let j = 0; j < no_of_squares; j++){
+  else {
+    for (let i = 0; i < no_of_squares; i++) {
+      for (let j = 0; j < no_of_squares; j++) {
         board[i][j] = boardState[no_of_squares - i - 1][no_of_squares - j - 1];
       }
     }
   }
   is_being_validated = false;
-  if (turnState == my_color){
+  if (turnState == my_color) {
     document.getElementById('status').innerText = 'Your turn';
     can_move = true;
   }
-  else{
+  else {
     document.getElementById('status').innerText = 'Opponent\'s turn';
     can_move = false;
   }
 });
 
-socket.on('startGame', (color, matchId) =>{
+socket.on('startGame', (color, matchId) => {
   my_color = color;
   match_id = matchId;
-  if(color == 0){
+  if (color == 0) {
     document.getElementById('status').innerText = 'Playing as white';
     can_move = true;
   }
-  else{
+  else {
     document.getElementById('status').innerText = 'Playing as black';
-    for(let i = 0; i < no_of_squares; i++){
-      for(let j = i; j < no_of_squares; j++){
+    for (let i = 0; i < no_of_squares; i++) {
+      for (let j = i; j < no_of_squares; j++) {
         let temp = board[i][j];
         board[i][j] = board[no_of_squares - i - 1][no_of_squares - j - 1];
         board[no_of_squares - i - 1][no_of_squares - j - 1] = temp;
       }
     }
-      for(let i = 0; i < no_of_squares/2; i++){
-          let temp = board[i][i];
-          board[i][i] = board[no_of_squares - i - 1][no_of_squares - i - 1];
-          board[no_of_squares - i - 1][no_of_squares - i - 1] = temp;
-      }
+    for (let i = 0; i < no_of_squares / 2; i++) {
+      let temp = board[i][i];
+      board[i][i] = board[no_of_squares - i - 1][no_of_squares - i - 1];
+      board[no_of_squares - i - 1][no_of_squares - i - 1] = temp;
+    }
   }
 });
 
@@ -74,13 +74,6 @@ socket.on('auth', resp => {
     failDiv.classList.add('show');
   }
 });
-
-/* 
-
-  use socket.emit('move', move_string);
-  to send move to server
-
-*/
 
 socket.on('signup', valid => {
   if (valid == 1) {
