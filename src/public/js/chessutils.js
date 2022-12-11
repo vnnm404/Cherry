@@ -1,20 +1,20 @@
-import assert from 'assert';
+// let header_guard = true;
 
 const noOfSquares = 8;
 
 const whiteTurn = 0;
 const blackTurn = 1;
 
-const blank = 0b0000;
-const white = 0b0000;
-const black = 0b1000;
+// const blank = 0b0000;
+// const white = 0b0000;
+// const black = 0b1000;
 
-const pawn = 0b0001;
-const king = 0b0010;
-const queen = 0b0011;
-const rook = 0b0100;
-const bishop = 0b0101;
-const knight = 0b0110;
+// const pawn = 0b0001;
+// const king = 0b0010;
+// const queen = 0b0011;
+// const rook = 0b0100;
+// const bishop = 0b0101;
+// const knight = 0b0110;
 
 function Coord(x, y) {
     let coord = { "x": x, "y": y };
@@ -59,17 +59,12 @@ function colorToTurn(color) {
         return blackTurn;
 }
 
-export function chessMakeMove(match, fromCoords, toCoords) {
-    match.boardState[toCoords.y][toCoords.x] = match.boardState[fromCoords.y][fromCoords.x];
-    match.boardState[fromCoords.y][fromCoords.x] = 0;
-    match.turnState = 1 - match.turnState;
-};
 
-export function chessMoveValidate(board, moveFromCoord, moveToCoord, turn) {
+function chessMoveValidate(board, moveFromCoord, moveToCoord, turn) {
     // check if the board is of right size,
     // this shouldn't be wrong as it is not user controlled
-    assert.equal(board.length, noOfSquares);
-    assert.equal(board[0].length, noOfSquares);
+    // assert.equal(board.length, noOfSquares);
+    // assert.equal(board[0].length, noOfSquares);
 
     let valid = true;
 
@@ -79,19 +74,19 @@ export function chessMoveValidate(board, moveFromCoord, moveToCoord, turn) {
 
     // move to same position not a move
     if (coordEqual(moveFromCoord, moveToCoord)) {
-        console.log("ChessError: move to same position not a move");
+        // console.log("ChessError: move to same position not a move");
         return false;
     }
 
     if (valid == false) {
-        console.log("ChessError: Invalid board positions");
+        // console.log("ChessError: Invalid board positions");
         return false;
     }
     let piece = getPiece(board[moveFromCoord.y][moveFromCoord.x]);
 
     // if player moved a blank square its invalid
     if (piece == blank) {
-        console.log("2");
+        // console.log("2");
         return false;
     }
     if (turn == 0 && getColor(board[moveFromCoord.y][moveFromCoord.x]) != white)
@@ -121,11 +116,11 @@ export function chessMoveValidate(board, moveFromCoord, moveToCoord, turn) {
             moveFromCoord, moveToCoord, turn);
             break;
         default: valid = false;
-            console.log("ChessError: not a piece");
+            // console.log("ChessError: not a piece");
             break;
     }
 
-    console.log('Validator: Reached the end of validator::' + valid);
+    // console.log('Validator: Reached the end of validator::' + valid);
     return valid;
 }
 
@@ -166,7 +161,7 @@ function whitePawnMoveValidate(board, moveFromCoord, moveToCoord) {
 
     // cannot capture own pieces
     if (getColor(destValue) == white) {
-        console.log("Chess Error: Capturing your own pieces");
+        // console.log("Chess Error: Capturing your own pieces");
         return false;
     }
 
@@ -180,18 +175,18 @@ function whitePawnMoveValidate(board, moveFromCoord, moveToCoord) {
     }
     // only one step ahead at atime and in only one direction
     if (moveFromCoord.y - 1 != moveToCoord.y) {
-        console.log('Chess Error: Too much ahead')
+        // console.log('Chess Error: Too much ahead')
         return false;
     }
     // cannot capture own pieces
     if (getColor(destValue) == black && differenceX == 0) {
-        console.log("Chess Error: pawns cannot capture pieces infront");
+        // console.log("Chess Error: pawns cannot capture pieces infront");
         return false;
     }
 
     // can move diagonally only during captures
     if (differenceX == 1 && destValue == blank) {
-        console.log('Chess Error: cant move diagonally without enemy');
+        // console.log('Chess Error: cant move diagonally without enemy');
         return false;
     }
 
@@ -203,7 +198,7 @@ function blackPawnMoveValidate(board, moveFromCoord, moveToCoord) {
 
     // cannot capture own pieces
     if (getColor(destValue) == black) {
-        console.log("Chess Error: Capturing your own pieces");
+        // console.log("Chess Error: Capturing your own pieces");
         return false;
     }
 
@@ -224,7 +219,7 @@ function blackPawnMoveValidate(board, moveFromCoord, moveToCoord) {
 
     // cannot capture own pieces
     if (getColor(destValue) == white && differenceX == 0) {
-        console.log("Chess Error: pawns cannot capture pieces infront");
+        // console.log("Chess Error: pawns cannot capture pieces infront");
         return false;
     }
 
@@ -254,12 +249,12 @@ function knightMoveValidate(board, moveFromCoord, moveToCoord, turn) {
 }
 
 function bishopMoveValidate(board, moveFromCoord, moveToCoord, turn) {
-    console.log("Validator: Validating Bishop move...");
+    // console.log("Validator: Validating Bishop move...");
     let destValue = board[moveToCoord.y][moveToCoord.x];
 
     // cannot capture own pieces
     if (getColor(destValue) == turnToColor(turn)) {
-        console.log("Chess Error: Capturing own pieces");
+        // console.log("Chess Error: Capturing own pieces");
         return false;
     }
 
@@ -268,7 +263,7 @@ function bishopMoveValidate(board, moveFromCoord, moveToCoord, turn) {
     let directionX = Math.sign(moveToCoord.x - moveFromCoord.x);
     let directionY = Math.sign(moveToCoord.y - moveFromCoord.y);
     if (differenceX != differenceY) {
-        console.log("ChessError: bishop can only move in diagonal");
+        // console.log("ChessError: bishop can only move in diagonal");
         return false;
     }
     let currCoord = Coord(moveFromCoord.x, moveFromCoord.y);
@@ -291,7 +286,7 @@ function bishopMoveValidate(board, moveFromCoord, moveToCoord, turn) {
     // console.log(moveToCoord);
     if (coordEqual(currCoord, moveToCoord))
         valid = true;
-    console.log('Bishop validator::' + valid);
+    // console.log('Bishop validator::' + valid);
     return valid;
 }
 
@@ -300,7 +295,7 @@ function rookMoveValidate(board, moveFromCoord, moveToCoord, turn) {
 
     // cannot capture own pieces
     if (getColor(destValue) == turnToColor(turn)) {
-        console.log("Chess Error: Capturing own pieces");
+        // console.log("Chess Error: Capturing own pieces");
         return false;
     }
 
@@ -314,12 +309,12 @@ function rookMoveValidate(board, moveFromCoord, moveToCoord, turn) {
     }
 
     let currCoord = Coord(moveFromCoord.x, moveFromCoord.y);
-    console.log(currCoord);
+    // console.log(currCoord);
 
     // go in the direction one step
     currCoord.x += 1 * directionX;
     currCoord.y += 1 * directionY;
-    console.log(currCoord);
+    // console.log(currCoord);
 
     let valid = false;
     // go in the direction and check if its all clear
@@ -329,10 +324,10 @@ function rookMoveValidate(board, moveFromCoord, moveToCoord, turn) {
         currCoord.x += 1 * directionX;
         currCoord.y += 1 * directionY;
     }
-    console.log(currCoord);
+    // console.log(currCoord);
 
     if (coordEqual(currCoord, moveToCoord)) {
-        console.log('Can reach this square');
+        // console.log('Can reach this square');
         valid = true;
     }
     return valid;
@@ -359,13 +354,15 @@ function kingMoveValidate(board, moveFromCoord, moveToCoord, turn) {
 }
 
 function genMoves(board, position){
-    if(!validBoard(board))
-        return [];
+    // if(!validBoard(board))
+    //     return [];
     let moves = [];
+    let value = board[position.y][position.x];
+    // console.log(getColor(value));
     for(let i = 0; i < noOfSquares; i++){
         for(let j = 0; j < noOfSquares; j++){
             let to = Coord(i, j);
-            if(chessMoveValidate(board, position, to)){
+            if(chessMoveValidate(board, position, to, colorToTurn(getColor(value)))){
                 moves.push(Move(position, to));
             }
         }
@@ -389,4 +386,3 @@ function genAllMoves(board, color){
     }
     return moves;
 }
-
