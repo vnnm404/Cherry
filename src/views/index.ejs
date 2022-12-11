@@ -1,12 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Index</title>
+
+  <link rel="stylesheet" href="styles/index.css">
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/events.js"></script>
 </head>
+
 <body>
-  new index page baby! 
+  <div id="form" class="">
+    <div>
+      <label for="username">Username</label>
+      <input type="text" name="username" id="username">
+    </div>
+    <div>
+      <label for="password">Password</label>
+      <input type="text" name="password" id="password">
+    </div>
+    <button onclick="submitLoginDetails()">Sign In</button>
+    <button onclick="submitSignUpDetails()">Sign Up</button>
+  </div>
+  <div id="auth-success" class="hide"></div>
+  <div id="auth-fail" class="hide">
+    <h3>Invalid credentials.</h3>
+  </div>
+  <div id="signup-fail" class="hide">
+    <h3 id="signup-fail-usrnmexists" class="hide">Failed! User name already exists.</h3>
+    <h3 id="signup-fail-pswdlen" class="hide">Failed! Enter a non empty password.</h3>
+  </div>
+
+  <button onclick="play()" id="play-button">Play as Guest</button>
+
+  <script src="js/index.js"></script>
+  <script src="js/indexSockets.js"></script>
 </body>
+
 </html>
