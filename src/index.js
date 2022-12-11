@@ -69,7 +69,7 @@ io.on('connection', socket => {
   });
 
   socket.on('signup', ({ username, password }) => {
-    console.log(`User[${socket.id}]: signup with [${username}, ${password}]`);
+    // console.log(`User[${socket.id}]: signup with [${username}, ${password}]`);
 
     let r = signupUser(users, username, password);
     socket.emit('signup', r);
