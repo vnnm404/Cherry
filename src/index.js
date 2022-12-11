@@ -7,8 +7,8 @@ import path from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-import { chessMoveValidate } from './helpers/validator.js';
-import { matches, findMatch } from './helpers/matchmaking.js';
+import { chessMoveValidate } from './lib/validator.js';
+import { matches, findMatch } from './lib/matchmaking.js';
 
 const PORT = process.env.PORT || 5500;
 const app = express();
