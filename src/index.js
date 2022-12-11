@@ -16,18 +16,30 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-app.use(express.static(path.dirname(__filename) + '/public'));
-app.set('view engine', 'ejs');
-app.set('views', path.dirname(__filename) + '/views');
-app.get('/', (req, res) => {
-  res.render('index');
-});
-
 /*
 user database, convert this to an actual database
 */
 let users = [];
 
+// express server
+app.use(express.static(path.dirname(__filename) + '/public'));
+app.set('view engine', 'ejs');
+app.set('views', path.dirname(__filename) + '/views');
+
+// routes
+app.get('/', (req, res) => {
+  res.redirect('/index');
+});
+
+app.get('/index', (req, res) => {
+  res.render('index');
+});
+
+app.get('/game', (req, res) => {
+  res.render('game');
+});
+
+// socket.io server
 io.on('connection', socket => {
   // console.log(`User[${socket.id}]: connected`);
   findMatch(socket);
