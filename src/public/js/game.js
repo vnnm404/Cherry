@@ -8,13 +8,16 @@ const ctx = canvas.getContext('2d');
 const dark_square_color = '#4f5969';
 const light_square_color = '#c1c8d4';
 const move_square_color = '#7af4ae';
+const possible_move_color = '#74f551';
+
 const start_fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR';
-const no_of_squares = 8;
+
 const side_len = 400;
 const offset_x = 25;
 const offset_y = 25;
 const delta_time = 10;
 
+const no_of_squares = 8;
 const blank = 0b0000;
 const white = 0b0000;
 const black = 0b1000;
@@ -225,6 +228,7 @@ function handle_drag() {
             board[i][j] = 0;
         }
         else {
+            ctx.fillStyle = 'black';
             ctx.font = Math.floor(side_len / no_of_squares) * 0.8 + 'px sans serif';
             let off_x = Math.floor(side_len / no_of_squares) * 0.3;
             ctx.fillText(sprites[holding_piece], mouse_x - off_x, mouse_y);
@@ -241,6 +245,41 @@ function handle_drag() {
             board[i][j] = holding_piece;
             holding_piece = 0;
         }
+    }
+}
+
+function display_possible_moves(){
+    let side_len_square = side_len / no_of_squares;
+    let new_board = []
+    let new_from_position = Coord(from_position.x, from_position.y);
+    if (my_color == 0)
+        new_board = board;
+    else {
+        for (let i = 0; i < no_of_squares; i++) {
+            new_board.push([]);
+            for (let j = 0; j < no_of_squares; j++) {
+                new_board[i].push(board[no_of_squares - i - 1][no_of_squares - j - 1]);
+            }
+        }
+        new_from_position.x = no_of_squares - new_from_position.x - 1;
+        new_from_position.y = no_of_squares - new_from_position.y - 1;
+    }
+    console.log(new_board)
+    let moves = genMoves(new_board, new_from_position);
+    // console.log(moves);
+    for(let m of moves){
+        console.log(m);
+        ctx.fillStyle = possible_move_color;
+        ctx.font = '15px sans-serif';
+        let off_x = offset_x + (side_len_square) / 3;
+        let off_y = offset_y * 1.5 + (side_len_square) / 3;
+        if(my_color == 0)
+            ctx.fillText('⬤', off_x + m.to.x * side_len_square,
+        off_y + m.to.y * side_len_square);
+        else
+        ctx.fillText('⬤', off_x + (no_of_squares - m.to.x - 1) * side_len_square,
+        off_y + (no_of_squares - m.to.y - 1) * side_len_square);
+            // ⬤
     }
 }
 
@@ -288,7 +327,13 @@ canvas.ontouchmove = (e) => {
 setInterval(() => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     draw();
+    if(is_holding_piece){
+        board[from_position.y][from_position.x] = holding_piece;
+        display_possible_moves();
+        board[from_position.y][from_position.x] = blank;
+    }
     if(can_move)
         handle_drag();
+    
     render_board();
 }, delta_time);
