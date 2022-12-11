@@ -46,7 +46,9 @@ function initMatch(id, playerSocket){
     matchId : id,
     player1Socket : playerSocket,
     player2Socket : null,
-    boardState : initBoardState,
+    boardState : initBoardState.map(function(arr) {
+      return arr.slice();
+      }),
     turnState : 0
   }
 }
@@ -64,8 +66,8 @@ function findMatch(playerSocket){
 }
 
 function startMatch(i){
-  matches[i].player1Socket.emit('startGame', 0);
-  matches[i].player2Socket.emit('startGame', 1);
+  matches[i].player1Socket.emit('startGame', 0, i);
+  matches[i].player2Socket.emit('startGame', 1, i);
 }
 
 app.get('/', (req, res) => {
@@ -74,8 +76,11 @@ app.get('/', (req, res) => {
 
 io.on('connection', socket => {
   console.log(`User[${socket.id}]: connected`);
-  let matchId = findMatch(socket);
-  socket.on('move', (fromCoords, toCoords) => {
+  findMatch(socket);
+  console.log(initBoardState);
+  socket.on('move', (matchId, fromCoords, toCoords) => {
+    console.log(initBoardState);
+
     console.log(`User[${socket.id}]: sent: ${fromCoords.x} ${fromCoords.y} || ${toCoords.x} ${toCoords.y}`);
 
     /*

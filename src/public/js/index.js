@@ -34,6 +34,7 @@ let old_piece, new_piece;
 let is_being_validated = false;
 let can_move = false;
 let my_color = null;
+let match_id = null;
 
 let sprites = []
 sprites[blank] = ' ';
@@ -172,6 +173,7 @@ function get_box_coords() {
     let side_len_square = side_len / no_of_squares;
     let j = Math.floor(x / side_len_square);
     let i = Math.floor(y / side_len_square);
+    // console.log(i, j);
     return [i, j];
 }
 
@@ -189,7 +191,7 @@ function handle_drag() {
         new_piece = holding_piece;
         to_position.x = curr_position.x;
         to_position.y = curr_position.y;
-        socket.emit('move', from_position, to_position);
+        socket.emit('move', match_id, from_position, to_position);
         is_being_validated = true;
     }
     was_mouse_down = is_mouse_down;
@@ -245,9 +247,28 @@ canvas.onmouseup = () => {
     // console.log(mouse_x, mouse_y);
 }
 
+canvas.ontouchstart = () => {
+    // console.log('down');
+    is_mouse_down = true;
+    // console.log(mouse_x, mouse_y);
+}
+canvas.ontouchend = () => {
+    // console.log('up');
+    is_mouse_down = false;
+    // console.log(mouse_x, mouse_y);
+}
+
+
 canvas.onmousemove = (event) => {
     mouse_x = event.clientX;
     mouse_y = event.clientY;
+}
+canvas.ontouchmove = (e) => {
+    e.preventDefault();
+    mouse_x = e.touches[0].clientX;
+    mouse_y = e.touches[0].clientY;
+    // console.log(mouse_x, mouse_y);
+
 }
 
 setInterval(() => {

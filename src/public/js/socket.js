@@ -9,9 +9,10 @@ socket.on('validated', (boardState, turnState) => {
     can_move = false;
 });
 
-socket.on('startGame', resp =>{
-  my_color = resp;
-  if(resp == 0){
+socket.on('startGame', (color, matchId) =>{
+  my_color = color;
+  match_id = matchId;
+  if(color == 0){
     console.log('I am white');
     can_move = true;
   }
