@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 import { chessMoveValidate } from './helpers/validator.js';
-import { match } from 'assert';
+import { matches, findMatch } from './helpers/matchmaking.js';
 
 const PORT = process.env.PORT || 5500;
 const app = express();
@@ -20,54 +20,8 @@ app.use(express.static(path.dirname(__filename) + '/public'));
 app.set('view engine', 'ejs');
 app.set('views', path.dirname(__filename) + '/views');
 
-/*
-  match{
-    matchId,
-    player1Socket,
-    player2Socket,
-    boardState,
-    turnState
-  }
-*/
-let matches = [];
 let users = [];
-const initBoardState = [[12, 14, 13, 11, 10, 13, 14, 12],
-                    [9, 9, 9, 9, 9, 9, 9, 9],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [1, 1, 1, 1, 1, 1, 1, 1],
-                    [4, 6, 5, 3, 2, 5, 6, 4]];
 
-function initMatch(id, playerSocket){
-  return {
-    matchId : id,
-    player1Socket : playerSocket,
-    player2Socket : null,
-    boardState : initBoardState.map(function(arr) {
-      return arr.slice();
-      }),
-    turnState : 0
-  }
-}
-
-function findMatch(playerSocket){
-  for(let i = 0; i < matches.length; i++){
-    if (matches[i].player2Socket == null){
-      matches[i].player2Socket = playerSocket;
-      startMatch(i);
-      return i;
-    } 
-  }
-  matches.push(initMatch(matches.length, playerSocket));
-  return matches.length - 1;
-}
-
-function startMatch(i){
-  matches[i].player1Socket.emit('startGame', 0, i);
-  matches[i].player2Socket.emit('startGame', 1, i);
-}
 
 function authenticateUser(username, password){
   for (let user of users){
@@ -85,9 +39,7 @@ app.get('/', (req, res) => {
 io.on('connection', socket => {
   console.log(`User[${socket.id}]: connected`);
   findMatch(socket);
-  console.log(initBoardState);
   socket.on('move', (matchId, fromCoords, toCoords) => {
-    console.log(initBoardState);
 
     console.log(`User[${socket.id}]: sent: ${fromCoords.x} ${fromCoords.y} || ${toCoords.x} ${toCoords.y}`);
 
