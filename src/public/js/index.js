@@ -54,7 +54,15 @@ sprites[black | rook] = '♜';
 sprites[black | bishop] = '♝';
 sprites[black | knight] = '♞';
 
-let board = [];
+let board = [
+  [12, 14, 13, 11, 10, 13, 14, 12],
+  [9, 9, 9, 9, 9, 9, 9, 9],
+  [0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0],
+  [1, 1, 1, 1, 1, 1, 1, 1],
+  [4, 6, 5, 3, 2, 5, 6, 4]];
 
 function init_board() {
     for (let i = 0; i < no_of_squares; i++) {
