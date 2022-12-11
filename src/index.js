@@ -3,7 +3,6 @@ import express from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
 import path from 'path';
-import crypto from 'crypto';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -17,13 +16,14 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-let generateSessionID = () => {
-  return crypto.randomBytes(16).toString('hex');
-};
-
 /*
 user database, convert this to an actual database
-user: { username, password }
+user: { username, password, sessions }
+sessions = [<session>]
+
+session:
+  id: sessionID,
+  expires: expirationDate
 */
 let users = [];
 
@@ -76,8 +76,8 @@ io.on('connection', socket => {
   });
 
   socket.on('auth', ({ username, password }) => {
-    let r = authenticateUser(users, username, password);
-    socket.emit('auth', r);
+    let [r, sessionID] = authenticateUser(users, username, password);
+    socket.emit('auth', r, sessionID);
   });
 
   socket.on('signup', ({ username, password }) => {

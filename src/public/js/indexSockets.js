@@ -1,6 +1,6 @@
 let socket = io();
 
-socket.on('auth', valid, sessionID => {
+socket.on('auth', (valid, sessionID) => {
   console.log('auth back: ' + valid);
 
   if (valid) {

@@ -1,10 +1,21 @@
+import crypto from 'crypto';
+
+let generateSessionID = () => {
+  return crypto.randomBytes(16).toString('hex');
+};
+
 export let authenticateUser = (users, username, password) => {
   for (let user of users) {
     if (user.username == username && user.password == password) {
-      return 1;
+      let session = {
+        id: generateSessionID(),
+        expires: new Date().toGMTString()
+      }
+      user.sessions.push(session);
+      return [1, session.id];
     }
   }
-  return 0;
+  return [0, null];
 }
 
 export let signupUser = (users, username, password) => {
@@ -22,7 +33,8 @@ export let signupUser = (users, username, password) => {
 
   users.push({
     username: username,
-    password: password
+    password: password,
+    sessions: []
   });
 
   return 1;
