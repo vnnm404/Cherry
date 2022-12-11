@@ -146,16 +146,6 @@ function pawnMoveValidate(board, moveFromCoord, moveToCoord, turn){
 
 function whitePawnMoveValidate(board, moveFromCoord, moveToCoord){
     
-    // only one step ahead at atime and in only one direction
-    if (moveFromCoord.y - 1 != moveToCoord.y){
-        console.log('Chess Error: Too much ahead')
-        return false;
-    }
-    
-    let differenceX = Math.abs(moveToCoord.x - moveFromCoord.x);
-    if (differenceX > 1)
-        return false;
-        
     let destValue = board[moveToCoord.y][moveToCoord.x];
 
     // cannot capture own pieces
@@ -164,6 +154,19 @@ function whitePawnMoveValidate(board, moveFromCoord, moveToCoord){
         return false;
     }
 
+    let differenceX = Math.abs(moveToCoord.x - moveFromCoord.x);
+    if (differenceX > 1)
+        return false;
+        
+    if(moveFromCoord.y == 6 && differenceX == 0 && moveToCoord.y == 4){
+        // pawns can move two moves ahead at the start
+        return true;
+    }
+    // only one step ahead at atime and in only one direction
+    if (moveFromCoord.y - 1 != moveToCoord.y){
+        console.log('Chess Error: Too much ahead')
+        return false;
+    }
     // cannot capture own pieces
     if (getColor(destValue) == black && differenceX == 0){
         console.log("Chess Error: pawns cannot capture pieces infront");
@@ -180,14 +183,6 @@ function whitePawnMoveValidate(board, moveFromCoord, moveToCoord){
 }
 
 function blackPawnMoveValidate(board, moveFromCoord, moveToCoord){
-    // only one step ahead at atime and in only one direction
-    if (moveFromCoord.y + 1 != moveToCoord.y)
-        return false;
-    
-    let differenceX = Math.abs(moveToCoord.x - moveFromCoord.x);
-    if (differenceX > 1)
-        return false;
-        
     let destValue = board[moveToCoord.y][moveToCoord.x];
 
     // cannot capture own pieces
@@ -195,7 +190,22 @@ function blackPawnMoveValidate(board, moveFromCoord, moveToCoord){
         console.log("Chess Error: Capturing your own pieces");
         return false;
     }
+    
+    
+    let differenceX = Math.abs(moveToCoord.x - moveFromCoord.x);
+    if (differenceX > 1)
+        return false;
+        
+    
+    if(moveFromCoord.y == 1 && differenceX == 0 && moveToCoord.y == 3){
+        // pawns can move two moves ahead at the start
+        return true;
+    }
 
+    // only one step ahead at atime and in only one direction
+    if (moveFromCoord.y + 1 != moveToCoord.y)
+        return false;   
+        
     // cannot capture own pieces
     if (getColor(destValue) == white && differenceX == 0){
         console.log("Chess Error: pawns cannot capture pieces infront");

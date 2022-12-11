@@ -1,23 +1,48 @@
 var socket = io();
 
 socket.on('validated', (boardState, turnState) => {
-  board = boardState;
+  if(my_color == 0)
+    board = boardState;
+  else{
+    for(let i = 0; i < no_of_squares; i++){
+      for(let j = 0; j < no_of_squares; j++){
+        board[i][j] = boardState[no_of_squares - i - 1][no_of_squares - j - 1];
+      }
+    }
+  }
   is_being_validated = false;
-  if (turnState == my_color)
+  if (turnState == my_color){
+    document.getElementById('status').innerText = 'Your turn';
     can_move = true;
-  else
+  }
+  else{
+    document.getElementById('status').innerText = 'Opponent\'s turn';
     can_move = false;
+  }
 });
 
 socket.on('startGame', (color, matchId) =>{
   my_color = color;
   match_id = matchId;
   if(color == 0){
-    console.log('I am white');
+    document.getElementById('status').innerText = 'Playing as white';
     can_move = true;
   }
-  else
-    console.log('I am black');
+  else{
+    document.getElementById('status').innerText = 'Playing as black';
+    for(let i = 0; i < no_of_squares; i++){
+      for(let j = i; j < no_of_squares; j++){
+        let temp = board[i][j];
+        board[i][j] = board[no_of_squares - i - 1][no_of_squares - j - 1];
+        board[no_of_squares - i - 1][no_of_squares - j - 1] = temp;
+      }
+    }
+      for(let i = 0; i < no_of_squares/2; i++){
+          let temp = board[i][i];
+          board[i][i] = board[no_of_squares - i - 1][no_of_squares - i - 1];
+          board[no_of_squares - i - 1][no_of_squares - i - 1] = temp;
+      }
+  }
 });
 
 socket.on('auth', resp => {

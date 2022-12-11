@@ -48,15 +48,18 @@ io.on('connection', socket => {
 
     let valid = chessMoveValidate(matches[matchId].boardState, fromCoords, toCoords, matches[matchId].turnState);
     console.log(matches[matchId].turnState + ': Move validated to be:: ' + valid);
-
+    let sentBoard = matches[matchId].boardState.map((arr) => {return arr.slice();});
     if (valid) {
       matches[matchId].boardState[toCoords.y][toCoords.x] = matches[matchId].boardState[fromCoords.y][fromCoords.x];
       matches[matchId].boardState[fromCoords.y][fromCoords.x] = 0;
       matches[matchId].turnState = 1 - matches[matchId].turnState;
-      
+      sentBoard = matches[matchId].boardState.map((arr) => {return arr.slice();});
+      sentBoard[fromCoords.y][fromCoords.x] |= 0b10000; // move indicators
+      sentBoard[toCoords.y][toCoords.x] |= 0b10000;
     }
-    matches[matchId].player1Socket.emit('validated', matches[matchId].boardState, matches[matchId].turnState);
-    matches[matchId].player2Socket.emit('validated', matches[matchId].boardState, matches[matchId].turnState);
+    
+    matches[matchId].player1Socket.emit('validated', sentBoard, matches[matchId].turnState);
+    matches[matchId].player2Socket.emit('validated', sentBoard, matches[matchId].turnState);
 
   });
 

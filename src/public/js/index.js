@@ -2,6 +2,7 @@
 
 const dark_square_color = '#4f5969';
 const light_square_color = '#c1c8d4';
+const move_square_color = '#7af4ae';
 const start_fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR';
 const no_of_squares = 8;
 const canvas = document.getElementById("cnv");
@@ -127,7 +128,20 @@ function render_board() {
     let off_y = offset_y * 2 + (side_len_square) / 5;
     for (let i = 0; i < no_of_squares; i++) {
         for (let j = 0; j < no_of_squares; j++) {
-            ctx.fillText(sprites[board[i][j]],
+            // if(my_color == 1)
+            //     ctx.fillText(sprites[board[no_of_squares - i - 1][no_of_squares - j - 1]],
+            //         off_x + j * side_len_square,
+            //         off_y + i * side_len_square);
+            // else
+            // if( board[i][j] & 0b10000 != 0){
+            //     console.log(i, j);  
+            //     ctx.fillStyle = move_square_color;
+            //     ctx.fillRect(offset_x + i * side_len_square,
+            //         offset_y + j * side_len_square,
+            //         side_len_square, side_len_square);
+            // }
+            ctx.fillStyle = 'black';
+            ctx.fillText(sprites[board[i][j] & (0b1111)],
                 off_x + j * side_len_square,
                 off_y + i * side_len_square);
         }
@@ -145,6 +159,10 @@ function draw() {
             }
             else
                 ctx.fillStyle = dark_square_color;
+            if(board.length != 0  && (board[j][i] & 0b10000) > 0){
+                console.log(i, j)
+                ctx.fillStyle = move_square_color;
+            }
 
             ctx.fillRect(offset_x + i * side_len_square,
                 offset_y + j * side_len_square,
@@ -191,7 +209,17 @@ function handle_drag() {
         new_piece = holding_piece;
         to_position.x = curr_position.x;
         to_position.y = curr_position.y;
-        socket.emit('move', match_id, from_position, to_position);
+        if (my_color == 0)
+            socket.emit('move', match_id, from_position, to_position);
+        else
+            socket.emit('move', match_id, {
+                    x : no_of_squares - from_position.x - 1 ,
+                    y : no_of_squares - from_position.y - 1 
+                },
+                {
+                    x : no_of_squares - to_position.x - 1 ,
+                    y : no_of_squares - to_position.y - 1 
+                });
         is_being_validated = true;
     }
     was_mouse_down = is_mouse_down;
@@ -260,8 +288,8 @@ canvas.ontouchend = () => {
 
 
 canvas.onmousemove = (event) => {
-    mouse_x = event.clientX;
-    mouse_y = event.clientY;
+    mouse_x = event.clientX - document.getElementById('cnv').getBoundingClientRect().x;
+    mouse_y = event.clientY - document.getElementById('cnv').getBoundingClientRect().y;
 }
 canvas.ontouchmove = (e) => {
     e.preventDefault();
