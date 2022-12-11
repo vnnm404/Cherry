@@ -23,22 +23,21 @@ app.get('/', (req, res) => {
   res.render('index');
 });
 
+/*
+user database, convert this to an actual database
+*/
+let users = [];
+
 io.on('connection', socket => {
   // console.log(`User[${socket.id}]: connected`);
   findMatch(socket);
   socket.on('move', (matchId, fromCoords, toCoords) => {
-
-    // console.log(`User[${socket.id}]: sent: ${fromCoords.x} ${fromCoords.y} || ${toCoords.x} ${toCoords.y}`);
-
-    // console.log('Validating: ' + matches[matchId].boardState[fromCoords.y][fromCoords.x]);
-
+    // authenticating move
     let valid = chessMoveValidate(
       matches[matchId].boardState,
       fromCoords, toCoords,
       matches[matchId].turnState
     );
-
-    // console.log(matches[matchId].turnState + ': move validated to be: ' + valid);
 
     let sentBoard = matches[matchId].boardState.map((arr) => { return arr.slice(); });
     if (valid) {
@@ -53,16 +52,14 @@ io.on('connection', socket => {
   });
 
   socket.on('auth', ({ username, password }) => {
-    // console.log(`User[${socket.id}]: auth with [${username}, ${password}]`);
-
-    let r = authenticateUser(username, password);
+    let r = authenticateUser(users, username, password);
     socket.emit('auth', r);
   });
 
   socket.on('signup', ({ username, password }) => {
-    // console.log(`User[${socket.id}]: signup with [${username}, ${password}]`);
+    console.log(`User[${socket.id}]: signup with [${username}, ${password}]`);
 
-    let r = signupUser(username, password);
+    let r = signupUser(users, username, password);
     socket.emit('signup', r);
   });
 
