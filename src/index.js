@@ -54,7 +54,6 @@ app.get('/game', (req, res) => {
 // socket.io server
 io.on('connection', socket => {
   // console.log(`User[${socket.id}]: connected`);
-  findMatch(socket);
   socket.on('move', (matchId, fromCoords, toCoords) => {
     // authenticating move
     let valid = chessMoveValidate(
@@ -75,9 +74,9 @@ io.on('connection', socket => {
     matches[matchId].player2Socket.emit('validated', sentBoard, matches[matchId].turnState);
   });
 
-  socket.on('auth', ({ username, password }) => {
+  socket.on('signin', ({ username, password }) => {
     let [r, sessionID] = authenticateUser(users, username, password);
-    socket.emit('auth', r, sessionID);
+    socket.emit('signin', r, sessionID);
   });
 
   socket.on('signup', ({ username, password }) => {
@@ -85,6 +84,12 @@ io.on('connection', socket => {
 
     let r = signupUser(users, username, password);
     socket.emit('signup', r);
+  });
+
+  socket.on('auth', sessionID => {
+    findMatch(socket);
+    // use sessionID to identify the user
+    // if sessionID is undefined, then the user plays as a guest
   });
 
   socket.on('disconnect', () => {

@@ -1,7 +1,7 @@
 let socket = io();
 
-socket.on('auth', (valid, sessionID) => {
-  console.log('auth back: ' + valid);
+socket.on('signin', (valid, sessionID) => {
+  console.log('signing valid: ' + valid);
 
   if (valid) {
     let form = document.getElementById('form');
@@ -55,7 +55,7 @@ socket.on('signup', valid => {
     let username = usernameInput.value;
     let password = passwordInput.value;
 
-    socket.emit('auth', {
+    socket.emit('signin', {
       username: username,
       password: password
     });

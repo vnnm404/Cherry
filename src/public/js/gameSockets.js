@@ -1,5 +1,16 @@
 var socket = io();
 
+function readCookie(name) {
+  return document.cookie.split('; ').find(row => row.split('=')[0] === name);
+}
+
+sendCookie = () => {
+  let sessionID = readCookie('sessionID');
+  socket.emit('auth', sessionID);
+};
+
+sendCookie();
+
 socket.on('validated', (boardState, turnState) => {
   if (my_color == 0)
     board = boardState;

@@ -5,7 +5,7 @@ submitLoginDetails = event => {
   let username = usernameInput.value;
   let password = passwordInput.value;
 
-  socket.emit('auth', {
+  socket.emit('signin', {
     username: username,
     password: password
   });
