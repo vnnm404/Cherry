@@ -16,7 +16,6 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 
-
 app.use(express.static(path.dirname(__filename) + '/public'));
 app.set('view engine', 'ejs');
 app.set('views', path.dirname(__filename) + '/views');
@@ -30,7 +29,8 @@ app.set('views', path.dirname(__filename) + '/views');
     turnState
   }
 */
-let matches = []
+let matches = [];
+let users = [];
 const initBoardState = [[12, 14, 13, 11, 10, 13, 14, 12],
                     [9, 9, 9, 9, 9, 9, 9, 9],
                     [0, 0, 0, 0, 0, 0, 0, 0],
@@ -39,7 +39,6 @@ const initBoardState = [[12, 14, 13, 11, 10, 13, 14, 12],
                     [0, 0, 0, 0, 0, 0, 0, 0],
                     [1, 1, 1, 1, 1, 1, 1, 1],
                     [4, 6, 5, 3, 2, 5, 6, 4]];
-let turnState = 0;
 
 function initMatch(id, playerSocket){
   return {
@@ -70,6 +69,15 @@ function startMatch(i){
   matches[i].player2Socket.emit('startGame', 1, i);
 }
 
+function authenticateUser(username, password){
+  for (let user of users){
+    if (user.username == username && user.password == password){
+      return true;
+    }
+  }
+  return false;
+}
+
 app.get('/', (req, res) => {
   res.render('index');
 });
@@ -82,18 +90,6 @@ io.on('connection', socket => {
     console.log(initBoardState);
 
     console.log(`User[${socket.id}]: sent: ${fromCoords.x} ${fromCoords.y} || ${toCoords.x} ${toCoords.y}`);
-
-    /*
-      valid move = validateMove(board, move_from, move_to, turn (black or white));
-
-      if valid move:
-        // success
-        socket.emit('validated', 1);
-      else:
-        // failure
-        socket.emit('validated', 0);
-
-    */
 
     // console.log('turn ::: ' + turnState);
     console.log('Validating: ' + matches[matchId].boardState[fromCoords.y][fromCoords.x]);
@@ -115,13 +111,37 @@ io.on('connection', socket => {
   socket.on('auth', ({ username, password }) => {
     console.log(`User[${socket.id}]: auth with [${username}, ${password}]`);
 
-    /*
-      if (authenticateUser(username, password)) {
-        socket.emit('auth', 1);
-      } else {
-        socket.emit('auth', 0);
+    if (authenticateUser(username, password)) {
+      socket.emit('auth', 1);
+    } else {
+      socket.emit('auth', 0);
+    }
+  });
+
+  socket.on('signup', ({ username, password }) => {
+    console.log(`User[${socket.id}]: signup with [${username}, ${password}]`);
+
+    // check if user is created
+    for(let user of users) {
+      if (user.username == username) {
+        socket.emit('signup', 0);
+        return;
       }
-    */
+    }
+
+    // check if password is non empty
+    if (password.length <= 0) {
+        socket.emit('signup', -1);
+        return;
+    }
+
+    users.push({
+      username : username,
+      password : password
+    });
+
+    // valid sign up
+    socket.emit('auth', 1);
   });
 
   socket.on('disconnect', () => {

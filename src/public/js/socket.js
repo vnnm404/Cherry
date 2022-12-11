@@ -56,3 +56,32 @@ socket.on('auth', resp => {
   to send move to server
 
 */
+
+socket.on('signup', valid => {
+  if (valid == 1) {
+    let usernameInput = document.getElementById('username');
+    let passwordInput = document.getElementById('password');
+
+    let username = usernameInput.value;
+    let password = passwordInput.value;
+
+    socket.emit('auth', {
+      username: username,
+      password: password
+    });
+  } else {
+    let signupDiv = document.getElementById('signup-fail');
+    signupDiv.classList.remove('hide');
+    signupDiv.classList.add('show');
+
+    if (valid == 0) {
+      let usrnDiv = document.getElementById('signup-fail-usrnmexists');
+      usrnDiv.classList.remove('hide');
+      usrnDiv.classList.add('show');
+    } else if (valid == -1) {
+      let psdDiv = document.getElementById('signup-fail-pswdlen');
+      psdDiv.classList.remove('hide');
+      psdDiv.classList.add('show');
+    }
+  }
+});
