@@ -97,13 +97,10 @@ io.on('connection', socket => {
   });
 
   socket.on('auth', (sessionID, matchId) => {
-    console.log('on auth got ', matchId);
     if (matchId === null) {
       // regular match making
-      console.log('REGULAR MATCH');
       findMatch(socket);
     } else {
-      console.log('PRIVATE MATCH');
       findPrivateMatch(socket, matchId); // if func returns 0, no private match exists with that matchID (invalid link)
     }
     // use sessionID to identify the user

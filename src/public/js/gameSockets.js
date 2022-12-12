@@ -7,14 +7,10 @@ function readCookie(name) {
 sendCookie = () => {
   let sessionID = readCookie('sessionID');
 
-  console.log('match: ', matchId);
-
   if (matchId == "")
     matchId = null;
   else
     matchId = Number(matchId);
-
-  console.log('match: ', matchId);
 
   socket.emit('auth', sessionID, matchId);
 };
