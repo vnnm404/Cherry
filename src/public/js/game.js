@@ -1,6 +1,7 @@
 // no en passant, castling, or advance drawing yet
 const move_sound = new Audio('/audio/move-self.mp3');
 const capture_sound = new Audio('/audio/capture.mp3');
+const wrong_move_sound = new Audio('/audio/wrong_move_sound.mp3');
 
 const canvas = document.getElementById("cnv");
 const ctx = canvas.getContext('2d');
@@ -237,10 +238,6 @@ function handle_drag() {
     else {
         if (is_holding_piece) {
             is_holding_piece = false;
-            if (board[i][j] == 0)
-                move_sound.play();
-            else
-                capture_sound.play();
             old_piece = board[i][j];
             board[i][j] = holding_piece;
             holding_piece = 0;

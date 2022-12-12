@@ -12,6 +12,36 @@ sendCookie = () => {
 sendCookie();
 
 socket.on('validated', (boardState, turnState) => {
+  if(can_move){
+    if(my_color == white){
+      if (((boardState[from_position.y][from_position.x] & 0b1111) == blank) 
+        && (board[to_position.y][to_position.x] & 0b1111) != blank)
+        capture_sound.play();
+      else if ((boardState[from_position.y][from_position.x] & (0b1111)) == blank)
+          move_sound.play();
+      else{
+        wrong_move_sound.play();
+        document.getElementById('cnv').classList.add("shake");
+        setTimeout(()=>{
+          document.getElementById('cnv').classList.remove("shake");
+        }, 100)
+      }
+    }
+    else{
+      if (((boardState[no_of_squares - 1 - from_position.y][no_of_squares - 1 - from_position.x] & 0b1111) == blank) 
+        && (board[ no_of_squares - 1 - to_position.y][no_of_squares - 1 - to_position.x] & 0b1111) != blank)
+        capture_sound.play();
+      else if ((boardState[no_of_squares - 1 - from_position.y][no_of_squares - 1 - from_position.x] & (0b1111)) == blank)
+          move_sound.play();
+      else{
+        wrong_move_sound.play();
+        document.getElementById('cnv').classList.add("shake");
+        setTimeout(()=>{
+          document.getElementById('cnv').classList.remove("shake");
+        }, 100)
+      }
+    }
+  }
   if (my_color == 0)
     board = boardState;
   else {
@@ -30,6 +60,7 @@ socket.on('validated', (boardState, turnState) => {
     document.getElementById('status').innerText = 'Opponent\'s turn';
     can_move = false;
   }
+  
 });
 
 socket.on('startGame', (color, matchId) => {
