@@ -82,3 +82,15 @@ socket.on('signup', valid => {
     }
   }
 });
+
+socket.on('private-match', matchId => {
+  let linkDiv = document.getElementById('generated-link'); 
+
+  let url = window.location.host + '/game?matchId=' + matchId;
+
+  linkDiv.innerHTML = url;
+  linkDiv.href = url;
+
+  linkDiv.classList.remove('hide');
+  linkDiv.classList.add('show');
+});

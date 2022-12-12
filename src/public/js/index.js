@@ -17,3 +17,7 @@ function writeCookie(name, value, days) {
 function readCookie(name) {
   return document.cookie.split('; ').find(row => row.split('=')[0] === name);
 }
+
+genLink = () => {
+  socket.emit('private-match', 1);
+};

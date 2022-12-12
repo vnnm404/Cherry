@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 import { chessMakeMove, checkLegalMove, checkMateCheck } from './lib/chessutils.js';
-import { matches, findMatch } from './lib/matchmaking.js';
+import { matches, findMatch, initMatch, findPrivateMatch } from './lib/matchmaking.js';
 import { authenticateUser, signupUser } from './lib/auth.js';
 
 const PORT = process.env.PORT || 5500;
@@ -48,7 +48,10 @@ app.get('/index', (req, res) => {
 });
 
 app.get('/game', (req, res) => {
-  res.render('game');
+  let matchId = req.query.matchId;
+  res.render('game', {
+    matchId: matchId ?? ""
+  });
 });
 
 // socket.io server
@@ -93,10 +96,35 @@ io.on('connection', socket => {
     socket.emit('signup', r);
   });
 
-  socket.on('auth', sessionID => {
-    findMatch(socket);
+  socket.on('auth', (sessionID, matchId) => {
+    console.log('on auth got ', matchId);
+    if (matchId === null) {
+      // regular match making
+      console.log('REGULAR MATCH');
+      findMatch(socket);
+    } else {
+      console.log('PRIVATE MATCH');
+      findPrivateMatch(socket, matchId); // if func returns 0, no private match exists with that matchID (invalid link)
+    }
     // use sessionID to identify the user
     // if sessionID is undefined, then the user plays as a guest
+  });
+
+  socket.on('private-match', arg => {
+    // generate link here and init new match
+    let maxMatchId = -1;
+    for(let match of matches) {
+      if (match.matchId > maxMatchId) {
+        maxMatchId = match.matchId;
+      }
+    }
+
+    let privateMatch = initMatch(maxMatchId + 1, null);
+    privateMatch.private = true;
+
+    matches.push(privateMatch);
+
+    socket.emit('private-match', privateMatch.matchId);
   });
 
   socket.on('disconnect', () => {
