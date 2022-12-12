@@ -7,7 +7,7 @@ import path from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-import { chessMoveValidate, chessMakeMove } from './lib/chessutils.js';
+import { chessMakeMove, checkLegalMove, checkMateCheck } from './lib/chessutils.js';
 import { matches, findMatch } from './lib/matchmaking.js';
 import { authenticateUser, signupUser } from './lib/auth.js';
 
@@ -55,8 +55,9 @@ app.get('/game', (req, res) => {
 io.on('connection', socket => {
   // console.log(`User[${socket.id}]: connected`);
   socket.on('move', (matchId, fromCoords, toCoords) => {
+
     // authenticating move
-    let valid = chessMoveValidate(
+    let valid = checkLegalMove(
       matches[matchId].boardState,
       fromCoords, toCoords,
       matches[matchId].turnState
@@ -72,6 +73,12 @@ io.on('connection', socket => {
 
     matches[matchId].player1Socket.emit('validated', sentBoard, matches[matchId].turnState);
     matches[matchId].player2Socket.emit('validated', sentBoard, matches[matchId].turnState);
+
+    // check if game over
+    if(checkMateCheck(matches[matchId].boardState, matches[matchId].turnState)){
+      matches[matchId].player1Socket.emit('checkMate', matches[matchId].turnState);
+      matches[matchId].player2Socket.emit('checkMate', matches[matchId].turnState);
+    }
   });
 
   socket.on('signin', ({ username, password }) => {

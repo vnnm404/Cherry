@@ -65,6 +65,11 @@ export function chessMakeMove(match, fromCoords, toCoords) {
     match.turnState = 1 - match.turnState;
 };
 
+export function checkLegalMove(board, moveFromCoord, moveToCoord, turn){
+    return chessMoveValidate(board, moveFromCoord, moveToCoord, turn)
+        && !checkCheck(board, moveFromCoord, moveToCoord, turn)
+}
+
 export function chessMoveValidate(board, moveFromCoord, moveToCoord, turn) {
     // check if the board is of right size,
     // this shouldn't be wrong as it is not user controlled
@@ -79,19 +84,19 @@ export function chessMoveValidate(board, moveFromCoord, moveToCoord, turn) {
 
     // move to same position not a move
     if (coordEqual(moveFromCoord, moveToCoord)) {
-        console.log("ChessError: move to same position not a move");
+        // console.log("ChessError: move to same position not a move");
         return false;
     }
 
     if (valid == false) {
-        console.log("ChessError: Invalid board positions");
+        // console.log("ChessError: Invalid board positions");
         return false;
     }
     let piece = getPiece(board[moveFromCoord.y][moveFromCoord.x]);
 
     // if player moved a blank square its invalid
     if (piece == blank) {
-        console.log("2");
+        // console.log("2");
         return false;
     }
     if (turn == 0 && getColor(board[moveFromCoord.y][moveFromCoord.x]) != white)
@@ -121,12 +126,39 @@ export function chessMoveValidate(board, moveFromCoord, moveToCoord, turn) {
             moveFromCoord, moveToCoord, turn);
             break;
         default: valid = false;
-            console.log("ChessError: not a piece");
+            // console.log("ChessError: not a piece");
             break;
     }
-
-    console.log('Validator: Reached the end of validator::' + valid);
+    // console.log('Validator: Reached the end of validator::' + valid);
     return valid;
+}
+
+function checkCheck(board, moveFromCoord, moveToCoord, turn){
+    let newBoard = board.map((arr)=>{return arr.slice();});
+    newBoard[moveToCoord.y][moveToCoord.x] = newBoard[moveFromCoord.y][moveFromCoord.x];
+    newBoard[moveFromCoord.y][moveFromCoord.x] = blank;
+    let currColor = turnToColor(turn);
+    let kingPos = Coord(0, 0);
+    for(let i = 0; i < noOfSquares; i++){
+        for(let j =0; j < noOfSquares; j++){
+            if(newBoard[j][i] == (king | currColor)){
+                kingPos.x = i;
+                kingPos.y = j;
+                break;
+            }
+        }
+    }
+    console.log(kingPos);
+    let moves = genAllMoves(newBoard, (black - currColor));
+    console.log(moves);
+    for (let m of moves){
+        // console.log("Move to: ", m.to);
+        if(coordEqual(m.to, kingPos)){
+            console.log("king in danger");
+            return true;
+        }
+    }
+    return false;
 }
 
 function coordValidate(coord) {
@@ -166,7 +198,7 @@ function whitePawnMoveValidate(board, moveFromCoord, moveToCoord) {
 
     // cannot capture own pieces
     if (getColor(destValue) == white) {
-        console.log("Chess Error: Capturing your own pieces");
+        // console.log("Chess Error: Capturing your own pieces");
         return false;
     }
 
@@ -174,24 +206,24 @@ function whitePawnMoveValidate(board, moveFromCoord, moveToCoord) {
     if (differenceX > 1)
         return false;
 
-    if (moveFromCoord.y == 6 && differenceX == 0 && moveToCoord.y == 4) {
+    if (getColor(destValue) == -1 && moveFromCoord.y == 6 && differenceX == 0 && moveToCoord.y == 4) {
         // pawns can move two moves ahead at the start
         return true;
     }
     // only one step ahead at atime and in only one direction
     if (moveFromCoord.y - 1 != moveToCoord.y) {
-        console.log('Chess Error: Too much ahead')
+        // console.log('Chess Error: Too much ahead')
         return false;
     }
     // cannot capture own pieces
     if (getColor(destValue) == black && differenceX == 0) {
-        console.log("Chess Error: pawns cannot capture pieces infront");
+        // console.log("Chess Error: pawns cannot capture pieces infront");
         return false;
     }
 
     // can move diagonally only during captures
     if (differenceX == 1 && destValue == blank) {
-        console.log('Chess Error: cant move diagonally without enemy');
+        // console.log('Chess Error: cant move diagonally without enemy');
         return false;
     }
 
@@ -203,7 +235,7 @@ function blackPawnMoveValidate(board, moveFromCoord, moveToCoord) {
 
     // cannot capture own pieces
     if (getColor(destValue) == black) {
-        console.log("Chess Error: Capturing your own pieces");
+        // console.log("Chess Error: Capturing your own pieces");
         return false;
     }
 
@@ -213,7 +245,7 @@ function blackPawnMoveValidate(board, moveFromCoord, moveToCoord) {
         return false;
 
 
-    if (moveFromCoord.y == 1 && differenceX == 0 && moveToCoord.y == 3) {
+    if (getColor(destValue) == -1 && moveFromCoord.y == 1 && differenceX == 0 && moveToCoord.y == 3) {
         // pawns can move two moves ahead at the start
         return true;
     }
@@ -224,7 +256,7 @@ function blackPawnMoveValidate(board, moveFromCoord, moveToCoord) {
 
     // cannot capture own pieces
     if (getColor(destValue) == white && differenceX == 0) {
-        console.log("Chess Error: pawns cannot capture pieces infront");
+        // console.log("Chess Error: pawns cannot capture pieces infront");
         return false;
     }
 
@@ -254,12 +286,12 @@ function knightMoveValidate(board, moveFromCoord, moveToCoord, turn) {
 }
 
 function bishopMoveValidate(board, moveFromCoord, moveToCoord, turn) {
-    console.log("Validator: Validating Bishop move...");
+    // console.log("Validator: Validating Bishop move...");
     let destValue = board[moveToCoord.y][moveToCoord.x];
 
     // cannot capture own pieces
     if (getColor(destValue) == turnToColor(turn)) {
-        console.log("Chess Error: Capturing own pieces");
+        // console.log("Chess Error: Capturing own pieces");
         return false;
     }
 
@@ -268,16 +300,16 @@ function bishopMoveValidate(board, moveFromCoord, moveToCoord, turn) {
     let directionX = Math.sign(moveToCoord.x - moveFromCoord.x);
     let directionY = Math.sign(moveToCoord.y - moveFromCoord.y);
     if (differenceX != differenceY) {
-        console.log("ChessError: bishop can only move in diagonal");
+        // console.log("ChessError: bishop can only move in diagonal");
         return false;
     }
     let currCoord = Coord(moveFromCoord.x, moveFromCoord.y);
-    // console.log(currCoord);
+    // // console.log(currCoord);
 
     // go in the direction one step
     currCoord.x += 1 * directionX;
     currCoord.y += 1 * directionY;
-    // console.log(currCoord);
+    // // console.log(currCoord);
 
     let valid = false;
     // go in the direction and check if its all clear
@@ -287,11 +319,11 @@ function bishopMoveValidate(board, moveFromCoord, moveToCoord, turn) {
         currCoord.x += 1 * directionX;
         currCoord.y += 1 * directionY;
     }
-    // console.log(currCoord);
-    // console.log(moveToCoord);
+    // // console.log(currCoord);
+    // // console.log(moveToCoord);
     if (coordEqual(currCoord, moveToCoord))
         valid = true;
-    console.log('Bishop validator::' + valid);
+    // console.log('Bishop validator::' + valid);
     return valid;
 }
 
@@ -300,7 +332,7 @@ function rookMoveValidate(board, moveFromCoord, moveToCoord, turn) {
 
     // cannot capture own pieces
     if (getColor(destValue) == turnToColor(turn)) {
-        console.log("Chess Error: Capturing own pieces");
+        // console.log("Chess Error: Capturing own pieces");
         return false;
     }
 
@@ -314,12 +346,12 @@ function rookMoveValidate(board, moveFromCoord, moveToCoord, turn) {
     }
 
     let currCoord = Coord(moveFromCoord.x, moveFromCoord.y);
-    console.log(currCoord);
+    // console.log(currCoord);
 
     // go in the direction one step
     currCoord.x += 1 * directionX;
     currCoord.y += 1 * directionY;
-    console.log(currCoord);
+    // console.log(currCoord);
 
     let valid = false;
     // go in the direction and check if its all clear
@@ -329,10 +361,10 @@ function rookMoveValidate(board, moveFromCoord, moveToCoord, turn) {
         currCoord.x += 1 * directionX;
         currCoord.y += 1 * directionY;
     }
-    console.log(currCoord);
+    // console.log(currCoord);
 
     if (coordEqual(currCoord, moveToCoord)) {
-        console.log('Can reach this square');
+        // console.log('Can reach this square');
         valid = true;
     }
     return valid;
@@ -359,13 +391,15 @@ function kingMoveValidate(board, moveFromCoord, moveToCoord, turn) {
 }
 
 function genMoves(board, position){
-    if(!validBoard(board))
-        return [];
+    // if(!validBoard(board))
+    //     return [];
     let moves = [];
+    let value = board[position.y][position.x];
+    // console.log(getColor(value));
     for(let i = 0; i < noOfSquares; i++){
         for(let j = 0; j < noOfSquares; j++){
             let to = Coord(i, j);
-            if(chessMoveValidate(board, position, to)){
+            if(chessMoveValidate(board, position, to, colorToTurn(getColor(value)))){
                 moves.push(Move(position, to));
             }
         }
@@ -374,8 +408,8 @@ function genMoves(board, position){
 }
 
 function genAllMoves(board, color){
-    if(!validBoard(board))
-        return [];
+    // if(!validBoard(board))
+    //     return [];
     let moves = [];
     for(let i = 0; i < noOfSquares; i++){
         for(let j = 0; j < noOfSquares; j++){
@@ -389,4 +423,47 @@ function genAllMoves(board, color){
     }
     return moves;
 }
+
+function genLegalMoves(board, position){
+    // if(!validBoard(board))
+    //     return [];
+    let moves = [];
+    let value = board[position.y][position.x];
+    // console.log(getColor(value));
+    for(let i = 0; i < noOfSquares; i++){
+        for(let j = 0; j < noOfSquares; j++){
+            let to = Coord(i, j);
+            if(checkLegalMove(board, position, to, colorToTurn(getColor(value)))){
+                moves.push(Move(position, to));
+            }
+        }
+    }
+    return moves;
+}
+
+function genAllLegalMoves(board, color){
+    // if(!validBoard(board))
+    //     return [];
+    let moves = [];
+    for(let i = 0; i < noOfSquares; i++){
+        for(let j = 0; j < noOfSquares; j++){
+            let pos = Coord(i, j);
+            if(getColor(board[j][i]) == color){
+                for (let k of genLegalMoves(board, pos)){
+                    moves.push(k);
+                }
+            }
+        }
+    }
+    return moves;
+}
+
+// no more legal moves for whose turn it is 
+export function checkMateCheck(board, turn){
+    let color = turnToColor(turn);
+    if(genAllLegalMoves(board, color).length == 0)
+        return true;
+    return false;
+}
+
 

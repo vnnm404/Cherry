@@ -124,6 +124,39 @@ function chessMoveValidate(board, moveFromCoord, moveToCoord, turn) {
     return valid;
 }
 
+function checkCheck(board, moveFromCoord, moveToCoord, turn){
+    let newBoard = board.map((arr)=>{return arr.slice();});
+    newBoard[moveToCoord.y][moveToCoord.x] = newBoard[moveFromCoord.y][moveFromCoord.x];
+    newBoard[moveFromCoord.y][moveFromCoord.x] = blank;
+    let currColor = turnToColor(turn);
+    let kingPos = Coord(0, 0);
+    for(let i = 0; i < noOfSquares; i++){
+        for(let j =0; j < noOfSquares; j++){
+            if(newBoard[j][i] == (king | currColor)){
+                kingPos.x = i;
+                kingPos.y = j;
+                break;
+            }
+        }
+    }
+    console.log(kingPos);
+    let moves = genAllMoves(newBoard, (black - currColor));
+    console.log(moves);
+    for (let m of moves){
+        // console.log("Move to: ", m.to);
+        if(coordEqual(m.to, kingPos)){
+            console.log("king in danger");
+            return true;
+        }
+    }
+    return false;
+}
+
+function checkLegalMove(board, moveFromCoord, moveToCoord, turn){
+    return chessMoveValidate(board, moveFromCoord, moveToCoord, turn)
+        && !checkCheck(board, moveFromCoord, moveToCoord, turn)
+}
+
 function coordValidate(coord) {
     if (coord.x == undefined)
         return false;
@@ -169,7 +202,7 @@ function whitePawnMoveValidate(board, moveFromCoord, moveToCoord) {
     if (differenceX > 1)
         return false;
 
-    if (moveFromCoord.y == 6 && differenceX == 0 && moveToCoord.y == 4) {
+    if (getColor(destValue) == -1 && moveFromCoord.y == 6 && differenceX == 0 && moveToCoord.y == 4) {
         // pawns can move two moves ahead at the start
         return true;
     }
@@ -208,7 +241,7 @@ function blackPawnMoveValidate(board, moveFromCoord, moveToCoord) {
         return false;
 
 
-    if (moveFromCoord.y == 1 && differenceX == 0 && moveToCoord.y == 3) {
+    if (getColor(destValue) == -1 && moveFromCoord.y == 1 && differenceX == 0 && moveToCoord.y == 3) {
         // pawns can move two moves ahead at the start
         return true;
     }
@@ -381,6 +414,23 @@ function genAllMoves(board, color){
                 for (let k of genMoves(board, pos)){
                     moves.push(k);
                 }
+            }
+        }
+    }
+    return moves;
+}
+
+function genLegalMoves(board, position){
+    // if(!validBoard(board))
+    //     return [];
+    let moves = [];
+    let value = board[position.y][position.x];
+    // console.log(getColor(value));
+    for(let i = 0; i < noOfSquares; i++){
+        for(let j = 0; j < noOfSquares; j++){
+            let to = Coord(i, j);
+            if(checkLegalMove(board, position, to, colorToTurn(getColor(value)))){
+                moves.push(Move(position, to));
             }
         }
     }

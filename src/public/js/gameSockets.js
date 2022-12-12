@@ -55,3 +55,12 @@ socket.on('startGame', (color, matchId) => {
     }
   }
 });
+
+socket.on('checkMate', turn => {
+  can_move = false;
+  if(my_color == turnToColor(turn)){
+    document.getElementById('status').innerText = 'Check Mate you lost! 😢';
+  }
+  else
+    document.getElementById('status').innerText = 'Check Mate you Won! 🎉';
+});

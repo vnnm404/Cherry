@@ -265,7 +265,7 @@ function display_possible_moves(){
         new_from_position.y = no_of_squares - new_from_position.y - 1;
     }
     console.log(new_board)
-    let moves = genMoves(new_board, new_from_position);
+    let moves = genLegalMoves(new_board, new_from_position);
     // console.log(moves);
     for(let m of moves){
         console.log(m);
@@ -327,13 +327,14 @@ canvas.ontouchmove = (e) => {
 setInterval(() => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     draw();
+    
+    if(can_move)
+        handle_drag();
+    
+    render_board();
     if(is_holding_piece){
         board[from_position.y][from_position.x] = holding_piece;
         display_possible_moves();
         board[from_position.y][from_position.x] = blank;
     }
-    if(can_move)
-        handle_drag();
-    
-    render_board();
 }, delta_time);

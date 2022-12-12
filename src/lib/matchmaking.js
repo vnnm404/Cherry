@@ -36,7 +36,7 @@ export function findMatch(playerSocket) {
   for (let i = 0; i < matches.length; i++) {
     if (matches[i].player2Socket == null) {
       matches[i].player2Socket = playerSocket;
-      startMatch(i);
+      startMatch(matches[i].matchId);
       return i;
     }
   }
