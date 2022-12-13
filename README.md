@@ -3,7 +3,7 @@
 <p><b>Cherry</b> is a self-hosted online multiplayer chess app.</p>
 <p>It connects two <b>berries</b> (<i>players</i>) with a <b>stem</b> (<i>server</i>) to produce a cherry!</p>
 <p>Its simple and minimal, written in <code>nodejs</code>, <code>express</code> and <code>socket.io</code > . It uses websockets to enable multiplayer and supports private matches through invite links so you can play with your friends! It also supports user authentication with cookies and sessions.</p>
-<a href="#getting-started">Getting started</a> • <a href="#installation">Installation</a> • <a href="#analysis">Usage</a>
+<a href="#getting-started">Getting started</a> • <a href="#installation">Installation</a> • <a href="#usage">Usage</a>
 </div>
 
 ## Getting Started
