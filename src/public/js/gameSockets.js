@@ -21,6 +21,15 @@ sendCookie();
 
 // return from server on whether a move was validated or not
 socket.on('validated', (boardState, turnState) => {
+  let changedSquares = 2;
+  // for(let i = 0; i < noOfSquares; i++){
+  //   for(let j = 0; j < noOfSquares; j++){
+  //     if(my_color == 0 && (boardState[i][j] == board[i][j]))
+  //       changedSquares++;
+  //     if(my_color == 1 && (boardState[i][j] == boardState[noOfSquares - i - 1][noOfSquares - j - 1]))
+  //       changedSquares++;
+  //   }
+  // }
   if(can_move){
     if(my_color == white){
       if (((boardState[from_position.y][from_position.x] & 0b1111) == blank) 
@@ -29,11 +38,13 @@ socket.on('validated', (boardState, turnState) => {
       else if ((boardState[from_position.y][from_position.x] & (0b1111)) == blank)
           move_sound.play();
       else{
-        wrong_move_sound.play();
-        document.getElementById('cnv').classList.add("shake");
-        setTimeout(()=>{
-          document.getElementById('cnv').classList.remove("shake");
-        }, 100)
+        if(changedSquares > 1){
+          wrong_move_sound.play();
+          document.getElementById('cnv').classList.add("shake");
+          setTimeout(()=>{
+            document.getElementById('cnv').classList.remove("shake");
+          }, 100)
+        }
       }
     }
     else{
@@ -43,11 +54,13 @@ socket.on('validated', (boardState, turnState) => {
       else if ((boardState[no_of_squares - 1 - from_position.y][no_of_squares - 1 - from_position.x] & (0b1111)) == blank)
           move_sound.play();
       else{
-        wrong_move_sound.play();
-        document.getElementById('cnv').classList.add("shake");
-        setTimeout(()=>{
-          document.getElementById('cnv').classList.remove("shake");
-        }, 100)
+        if(changedSquares == 0){
+          wrong_move_sound.play();
+          document.getElementById('cnv').classList.add("shake");
+          setTimeout(()=>{
+            document.getElementById('cnv').classList.remove("shake");
+          }, 100)
+        }
       }
     }
   }

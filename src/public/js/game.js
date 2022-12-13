@@ -33,14 +33,17 @@ const knight = 0b0110;
 let is_mouse_down = false;
 let was_mouse_down = false;
 let is_holding_piece = false;
-let holding_piece = 0;
+let holding_piece = 0; // the value of the piece held
 let mouse_x, mouse_y;
-let curr_position, from_position = {'x' : 0, 'y' : 0}, to_position= {'x' : 0, 'y' : 0};
-let old_piece, new_piece;
+let curr_position;
+let from_position = {'x' : 0, 'y' : 0}; // position being dragged from
+let to_position= {'x' : 0, 'y' : 0};    // position being dragged to
+let old_piece; // value of the piece at the target square originally
+let new_piece; // value of the piece being dragged to the square
 let is_being_validated = false;
-let can_move = false;
-let my_color = null;
-let match_id = null;
+let can_move = false; // to disable dragging when it's not your turn
+let my_color = null;  // white or black
+let match_id = null;  
 
 let sprites = [];
 sprites[blank] = ' ';
@@ -68,16 +71,8 @@ let board = [
   [1, 1, 1, 1, 1, 1, 1, 1],
   [4, 6, 5, 3, 2, 5, 6, 4]];
 
-function init_board() {
-    for (let i = 0; i < no_of_squares; i++) {
-        let rank = []
-        for (let j = 0; j < no_of_squares; j++) {
-            rank.push(0);
-        }
-        board.push(rank);
-    }
-}
 
+// updates the board based on given FEN string 
 function fen_to_board(fen) {
     let new_board = board;
     let rank = 0, file = 0;
@@ -126,6 +121,7 @@ function fen_to_board(fen) {
     board = new_board;
 }
 
+// Draws the pieces and pawns
 function render_board() {
     let side_len_square = side_len / no_of_squares;
     ctx.font = Math.floor(side_len_square) * 0.7 + 'px sans serif';
@@ -142,6 +138,8 @@ function render_board() {
 
 }
 
+
+// draws the board
 function draw() {
 
     let side_len_square = side_len / no_of_squares;
@@ -162,6 +160,9 @@ function draw() {
                 side_len_square, side_len_square);
         }
     }
+    // Display the rank and file numbers and letters
+
+    // write the numbers (1 - 8 ranks)
     ctx.fillStyle = 'black'
     for (let i = 0; i < no_of_squares; i++) {
         ctx.font = '15px sans-serif';
@@ -169,6 +170,8 @@ function draw() {
             offset_y * 1.3 + side_len_square / 2 + i * side_len_square);
         // numbered from bottom up  
     }
+
+    // write the letters (a - h files)
     for (let i = 0; i < no_of_squares; i++) {
         ctx.font = '15px sans-serif';
         ctx.fillText(String.fromCharCode(i + 97),
@@ -188,23 +191,41 @@ function get_box_coords() {
     return [i, j];
 }
 
+// The most complicated function ever
+// Handles drag
 function handle_drag() {
+
+    // Dont allow dragging while previous move is being validated
     if(is_being_validated)
         return;
+
+    // get the square on which the mouse is hovering on
     let coords = get_box_coords();
     let i = coords[0], j = coords[1];
+
+    // if mouse got clicked, update the from_position
     if(was_mouse_down == false && is_mouse_down == true){
         from_position.x = curr_position.x;
         from_position.y = curr_position.y;
     }
+
+    // if mouse was released and the player was holding a piece
     if(was_mouse_down == true && is_mouse_down == false && is_holding_piece){
+        
+        // store the actions, these will be sent to the server
         old_piece = board[i][j];
         new_piece = holding_piece;
         to_position.x = curr_position.x;
         to_position.y = curr_position.y;
-        if (my_color == 0)
+
+        // send movement data to the server
+        if (my_color == 0){
+            // if(!coordEqual(from_position, to_position))
             socket.emit('move', match_id, from_position, to_position);
+        }
         else
+            // Black has the board in a different perspective so
+            // adjust the coordinates accordingly
             socket.emit('move', match_id, {
                     x : no_of_squares - from_position.x - 1 ,
                     y : no_of_squares - from_position.y - 1 
@@ -215,20 +236,31 @@ function handle_drag() {
                 });
         is_being_validated = true;
     }
+
+    // store current mouse state as the old mouse state
     was_mouse_down = is_mouse_down;
+
+    // update current position
     curr_position = {
         "x": j,
         "y": i
     }
+
     if (is_mouse_down) {
         if (!is_holding_piece) {
-            if (board[i][j] == 0)
+            // if not holding a piece, check if the current square has a piece
+            // & (0b1111) is done as other bits maybe used for other purposes
+            if (board[i][j] & (0b1111) == 0) 
                 return;
+            
+            // set the holding piece to whatever is on that square
             is_holding_piece = true;
             holding_piece = board[i][j];
             board[i][j] = 0;
         }
         else {
+            // if already holding a piece and the mouse is held down,
+            // display the held piece at the mouse
             ctx.fillStyle = 'black';
             ctx.font = Math.floor(side_len / no_of_squares) * 0.8 + 'px sans serif';
             let off_x = Math.floor(side_len / no_of_squares) * 0.3;
@@ -237,6 +269,8 @@ function handle_drag() {
     }
     else {
         if (is_holding_piece) {
+            // If mouse is up and we are still holding a piece,
+            // Drop the piece 
             is_holding_piece = false;
             old_piece = board[i][j];
             board[i][j] = holding_piece;
@@ -245,10 +279,14 @@ function handle_drag() {
     }
 }
 
+// Indicates all the allowed legal moves with green circles
 function display_possible_moves(){
     let side_len_square = side_len / no_of_squares;
     let new_board = []
     let new_from_position = Coord(from_position.x, from_position.y);
+    
+    // if color is black. make a rotated version of the board and coordinates ;
+    // else keep it same
     if (my_color == 0)
         new_board = board;
     else {
@@ -262,8 +300,12 @@ function display_possible_moves(){
         new_from_position.y = no_of_squares - new_from_position.y - 1;
     }
     console.log(new_board)
+
+    // Get all the legal moves from the current held piece
     let moves = genLegalMoves(new_board, new_from_position);
     // console.log(moves);
+
+    // For every legal move draw a green circle indicating that
     for(let m of moves){
         console.log(m);
         ctx.fillStyle = possible_move_color;
@@ -282,7 +324,6 @@ function display_possible_moves(){
 
 window.onload = () => {
     draw();
-    init_board();
     fen_to_board(start_fen);
     render_board();
 }
