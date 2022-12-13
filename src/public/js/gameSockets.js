@@ -1,5 +1,7 @@
 var socket = io();
 
+// this part is auth
+// if a sessionID is present, then use it else null is sent (playing as a guest)
 function readCookie(name) {
   return document.cookie.split('; ').find(row => row.split('=')[0] === name);
 }
@@ -17,6 +19,7 @@ sendCookie = () => {
 
 sendCookie();
 
+// return from server on whether a move was validated or not
 socket.on('validated', (boardState, turnState) => {
   if(can_move){
     if(my_color == white){
@@ -69,6 +72,7 @@ socket.on('validated', (boardState, turnState) => {
   
 });
 
+// the server found a match with matchId=matchId so start the match
 socket.on('startGame', (color, matchId) => {
   my_color = color;
   match_id = matchId;
@@ -93,6 +97,7 @@ socket.on('startGame', (color, matchId) => {
   }
 });
 
+// checkmate is reached
 socket.on('checkMate', turn => {
   can_move = false;
   if(my_color == turnToColor(turn)){

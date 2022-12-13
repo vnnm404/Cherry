@@ -11,6 +11,7 @@ import { chessMakeMove, checkLegalMove, checkMateCheck } from './lib/chessutils.
 import { matches, findMatch, initMatch, findPrivateMatch } from './lib/matchmaking.js';
 import { authenticateUser, signupUser } from './lib/auth.js';
 
+// express server
 const PORT = process.env.PORT || 5500;
 const app = express();
 const server = http.createServer(app);
@@ -27,13 +28,7 @@ session:
 */
 let users = [];
 
-/*
-cookie database, convert this to an actual database 
-cookie: { token, expiry date}
-*/
-let cookies = [];
-
-// express server
+// set up express settings, use ejs for templating
 app.use(express.static(path.dirname(__filename) + '/public'));
 app.set('view engine', 'ejs');
 app.set('views', path.dirname(__filename) + '/views');
@@ -56,7 +51,7 @@ app.get('/game', (req, res) => {
 
 // socket.io server
 io.on('connection', socket => {
-  // console.log(`User[${socket.id}]: connected`);
+  // this route validates a move sent by a player
   socket.on('move', (matchId, fromCoords, toCoords) => {
 
     // authenticating move
@@ -84,11 +79,13 @@ io.on('connection', socket => {
     }
   });
 
+  // this route signs in a user
   socket.on('signin', ({ username, password }) => {
     let [r, sessionID] = authenticateUser(users, username, password);
     socket.emit('signin', r, sessionID);
   });
 
+  // this route signs up a user
   socket.on('signup', ({ username, password }) => {
     // console.log(`User[${socket.id}]: signup with [${username}, ${password}]`);
 
@@ -96,6 +93,7 @@ io.on('connection', socket => {
     socket.emit('signup', r);
   });
 
+  // this route authenticates a user with a sessionID
   socket.on('auth', (sessionID, matchId) => {
     if (matchId === null) {
       // regular match making
@@ -107,6 +105,7 @@ io.on('connection', socket => {
     // if sessionID is undefined, then the user plays as a guest
   });
 
+  // this route generates a private match on demand
   socket.on('private-match', arg => {
     // generate link here and init new match
     let maxMatchId = -1;
@@ -124,11 +123,13 @@ io.on('connection', socket => {
     socket.emit('private-match', privateMatch.matchId);
   });
 
+  // thie route is fired when a socket disconnects
   socket.on('disconnect', () => {
     // console.log(`User[${socket.id}]: disconnected`);
   });
 });
 
+// start the server
 server.listen(PORT, () => {
   console.log(`Live on ${PORT}`);
 });
